@@ -22,18 +22,25 @@ Transform Kindle highlights into a connected knowledge graph by:
 scribsidian/
 ├── scribsidian.py           # Python CLI tool
 ├── kindle-to-obsidian.tsx   # React web application
-├── output/                  # Generated markdown notes (121 files)
+├── output/                  # Legacy output directory (deprecated)
 ├── .git/                    # Git repository
 ├── .gitattributes          # Git configuration
 └── CLAUDE.md               # This file
+
+Outside repository:
+../../scribsidian_outputs/   # Generated markdown notes (default output location)
 ```
 
 ### Output Directory
 
-The `output/` directory contains generated markdown files organized into three types:
+**Default location**: `../../scribsidian_outputs/` (relative to the repository root, resolves to outside the repository)
+
+The output directory contains generated markdown files organized into three types:
 - **Quote notes**: Individual highlights with metadata (page, source, author, tags)
 - **Source notes**: Bibliographic information with summaries and topic tags
 - **Author notes**: Placeholder files for author bios
+
+**Note**: The output directory is created outside the repository to avoid cluttering the git history with generated content.
 
 ## Python CLI Tool (`scribsidian.py`)
 
@@ -50,10 +57,10 @@ The `output/` directory contains generated markdown files organized into three t
 ### Workflow
 
 1. **Input Collection**: Accept Kindle highlights via stdin (or use test mode with `--test`)
-2. **Quote Parsing**: Use regex pattern `Page\s+(.*?)\s*\|\s*Highlight\s*\n(.*?)\n` to extract quotes
+2. **Quote Parsing**: Use regex pattern to extract quotes (handles both "Highlight" and "Highlight Continued")
 3. **Metadata Collection**: Prompt for title, author, year, publisher, link, citation, tags
 4. **Slug Generation**: Create link-safe filenames from author and title
-5. **Output Generation**: Write three types of notes to `output/` directory
+5. **Output Generation**: Write three types of notes to `../../scribsidian_outputs/` directory
 
 ### Note Structure
 
@@ -220,7 +227,7 @@ fetch('https://api.anthropic.com/v1/messages', {
 
 **Python:**
 - Use `--test` flag for automated testing
-- Verify output files in `output/` directory
+- Verify output files in `../../scribsidian_outputs/` directory
 - Check slug generation for edge cases (special chars, long titles)
 - Test YAML frontmatter formatting
 
@@ -345,7 +352,7 @@ Current branch: `claude/claude-md-miwbufj4ruqwjoj3-01UjNHjixLiKHwCwdPMBZRYH`
 - Break WikiLink format: `[[slug]]` not `[slug]`
 - Add prefixes to tags in YAML (no `#` or `topics/`)
 - Change the note-type values (quote, source, author)
-- Remove the `output/` directory
+- Change the output directory without good reason
 - Hardcode API keys or credentials
 - Modify slug generation without testing edge cases
 - Break the 5-step flow in React app
@@ -381,7 +388,7 @@ Current branch: `claude/claude-md-miwbufj4ruqwjoj3-01UjNHjixLiKHwCwdPMBZRYH`
 
 **Python CLI:**
 ```
-stdin → parse_quotes() → metadata input → slug generation → write_*_note() → output/
+stdin → parse_quotes() → metadata input → slug generation → write_*_note() → ../../scribsidian_outputs/
 ```
 
 **React Web App:**
@@ -406,7 +413,7 @@ Paste quotes → Parse quotes → AI/Manual source entry → Review → Add tags
 
 **Python:**
 - Use `--test` flag to isolate quote parsing
-- Check `output/` directory for generated files
+- Check `../../scribsidian_outputs/` directory for generated files
 - Print intermediate values in `main()`
 - Validate regex patterns at regex101.com
 
