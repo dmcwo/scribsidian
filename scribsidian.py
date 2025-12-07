@@ -30,15 +30,8 @@ def clean_text(text):
 # Quote Parsing
 # --------------------------
 
-# Pattern now handles both "Highlight" and "Highlight Continued"
-QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight(?:\s+Continued)?\s*\n(.*?)(?=\nPage\s+|\Z)"
-
 def clean_quote_text(text):
     """Clean quote text by removing embedded page markers and normalizing whitespace."""
-    # Remove embedded "Page X | Highlight Continued" patterns with optional page number prefix
-    # Handles cases like "13Page 88 | Highlight Continued"
-    text = re.sub(r'\d*\s*Page\s+\d+\s*\|\s*Highlight(?:\s+Continued)?\s*', '', text)
-
     # Remove standalone page numbers that appear mid-quote (e.g., "Page 89")
     text = re.sub(r'Page\s+\d+\s*$', '', text)
 
@@ -49,12 +42,28 @@ def clean_quote_text(text):
     return text.strip()
 
 def parse_quotes(raw_text):
+    """
+    Parse Kindle highlights from raw text.
+
+    Preprocessing step: Remove "Highlight Continued" lines to merge split quotes.
+    This handles cases where a quote is split across pages with "Highlight Continued".
+    """
+    # Remove standalone page numbers followed by "Highlight Continued"
+    # Pattern: "\n13\nPage 88 | Highlight Continued\n" → "\n"
+    raw_text = re.sub(r'\n\d+\s*\nPage\s+\d+\s*\|\s*Highlight\s+Continued\s*\n', '\n', raw_text)
+
+    # Remove any remaining "Page X | Highlight Continued" lines
+    # Pattern: "\nPage 88 | Highlight Continued\n" → "\n"
+    raw_text = re.sub(r'\nPage\s+\d+\s*\|\s*Highlight\s+Continued\s*\n', '\n', raw_text)
+
+    # Now parse quotes (only matches "Highlight", not "Highlight Continued" since we removed those)
+    QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight\s*\n(.*?)(?=\nPage\s+|\Z)"
     matches = re.findall(QUOTE_PATTERN, raw_text, re.DOTALL)
+
     quotes = []
     for page, text in matches:
-        # Clean page number - extract just the number, remove any "Continued" artifacts
+        # Clean page number - extract just the number
         page_clean = page.strip()
-        # In case the page field somehow captured extra text, extract just the number
         page_match = re.search(r'(\d+)', page_clean)
         page_number = page_match.group(1) if page_match else page_clean
 
@@ -148,9 +157,8 @@ success is prerequisite for the success of virtually all other struggles.
 Page 88 | Highlight
 people were computers, however, the appropriate description of the digital attention economy's
 incursions upon their processing capacities would be that of the distributed denial-of-service, or
-
-13Page 88 | Highlight Continued
-
+13
+Page 88 | Highlight Continued
 DDoS, attack. In a DDoS attack, the attacker controls many computers and uses them to send
 many repeated requests to the target computer, effectively overwhelming its capacity to
 communicate with any other computer.
