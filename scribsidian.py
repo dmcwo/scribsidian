@@ -30,15 +30,37 @@ def clean_text(text):
 # Quote Parsing
 # --------------------------
 
-QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight\s*\n(.*?)\n(?=Page|\Z)"
+# Pattern now handles both "Highlight" and "Highlight Continued"
+QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight(?:\s+Continued)?\s*\n(.*?)(?=\nPage\s+|\Z)"
+
+def clean_quote_text(text):
+    """Clean quote text by removing embedded page markers and normalizing whitespace."""
+    # Remove embedded "Page X | Highlight Continued" patterns with optional page number prefix
+    # Handles cases like "13Page 88 | Highlight Continued"
+    text = re.sub(r'\d*\s*Page\s+\d+\s*\|\s*Highlight(?:\s+Continued)?\s*', '', text)
+
+    # Remove standalone page numbers that appear mid-quote (e.g., "Page 89")
+    text = re.sub(r'Page\s+\d+\s*$', '', text)
+
+    # Collapse PDF line breaks and excess whitespace
+    text = text.replace("\n", " ")
+    text = re.sub(r'\s+', ' ', text)
+
+    return text.strip()
 
 def parse_quotes(raw_text):
     matches = re.findall(QUOTE_PATTERN, raw_text, re.DOTALL)
     quotes = []
     for page, text in matches:
+        # Clean page number - extract just the number, remove any "Continued" artifacts
+        page_clean = page.strip()
+        # In case the page field somehow captured extra text, extract just the number
+        page_match = re.search(r'(\d+)', page_clean)
+        page_number = page_match.group(1) if page_match else page_clean
+
         quotes.append({
-            "page": page.strip(),
-            "text": clean_text(text),
+            "page": page_number,
+            "text": clean_quote_text(text),
         })
     return quotes
 
@@ -55,7 +77,7 @@ def write_quote_file(quote, metadata):
 note-type: quote
 source: "[[{metadata['source_slug']}]]"
 author: "[[{metadata['author_slug']}]]"
-page: {quote['page']}
+page: "{quote['page']}"
 ---
 
 > {quote['text']}
@@ -122,6 +144,16 @@ TEST_QUOTES = """
 Page xii | Highlight
 liberation of human attention may be the defining moral and political struggle of our time. Its
 success is prerequisite for the success of virtually all other struggles.
+
+Page 88 | Highlight
+people were computers, however, the appropriate description of the digital attention economy's
+incursions upon their processing capacities would be that of the distributed denial-of-service, or
+
+13Page 88 | Highlight Continued
+
+DDoS, attack. In a DDoS attack, the attacker controls many computers and uses them to send
+many repeated requests to the target computer, effectively overwhelming its capacity to
+communicate with any other computer.
 
 Page xii | Highlight
 We therefore have an obligation to rewire this system of intelligent, adversarial persuasion
