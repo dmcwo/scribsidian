@@ -202,7 +202,7 @@ def main():
     # -----------------------------------------
     # 3. Create Output Directory
     # -----------------------------------------
-    output_dir = Path("output")
+    output_dir = Path("../../scribsidian_output")
     output_dir.mkdir(exist_ok=True)
     os.chdir(output_dir)
 
