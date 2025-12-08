@@ -5,7 +5,6 @@ import re
 import sys
 import unicodedata
 from pathlib import Path
-from collections import Counter, defaultdict
 
 # --------------------------
 # Utility Functions
@@ -31,128 +30,47 @@ def clean_text(text):
 # Quote Parsing
 # --------------------------
 
-QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight\s*\n(.*?)\n(?=Page|\Z)"
+def clean_quote_text(text):
+    """Clean quote text by removing embedded page markers and normalizing whitespace."""
+    # Remove standalone page numbers that appear mid-quote (e.g., "Page 89")
+    text = re.sub(r'Page\s+\d+\s*$', '', text)
+
+    # Collapse PDF line breaks and excess whitespace
+    text = text.replace("\n", " ")
+    text = re.sub(r'\s+', ' ', text)
+
+    return text.strip()
 
 def parse_quotes(raw_text):
+    """
+    Parse Kindle highlights from raw text.
+
+    Preprocessing step: Remove "Highlight Continued" lines to merge split quotes.
+    This handles cases where a quote is split across pages with "Highlight Continued".
+    """
+    # Remove standalone page numbers followed by "Highlight Continued"
+    # Pattern: "\n13\nPage 88 | Highlight Continued\n" → "\n"
+    raw_text = re.sub(r'\n\d+\s*\nPage\s+\d+\s*\|\s*Highlight\s+Continued\s*\n', '\n', raw_text)
+
+    # Remove any remaining "Page X | Highlight Continued" lines
+    # Pattern: "\nPage 88 | Highlight Continued\n" → "\n"
+    raw_text = re.sub(r'\nPage\s+\d+\s*\|\s*Highlight\s+Continued\s*\n', '\n', raw_text)
+
+    # Now parse quotes (only matches "Highlight", not "Highlight Continued" since we removed those)
+    QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight\s*\n(.*?)(?=\nPage\s+|\Z)"
     matches = re.findall(QUOTE_PATTERN, raw_text, re.DOTALL)
+
     quotes = []
     for page, text in matches:
+        # Clean page number - extract just the number
+        page_clean = page.strip()
+        page_match = re.search(r'(\d+)', page_clean)
+        page_number = page_match.group(1) if page_match else page_clean
+
         quotes.append({
-            "page": page.strip(),
-            "text": clean_text(text),
+            "page": page_number,
+            "text": clean_quote_text(text),
         })
-    return quotes
-
-
-# --------------------------
-# Noun Phrase Extraction
-# --------------------------
-
-STOPWORDS = {
-    "the", "and", "of", "to", "in", "for", "on", "at", "a", "an", "is", "are",
-    "it", "its", "this", "that", "as", "with", "be", "by", "from", "we", "you",
-    "our", "their", "your", "but", "or", "into", "over"
-}
-
-def extract_noun_phrases(text):
-    """Heuristic multi-word noun/adjective phrase extractor."""
-    words = re.findall(r"[a-zA-Z\-']+", text.lower())
-
-    phrases = []
-    current = []
-
-    for w in words:
-        if w in STOPWORDS:
-            if len(current) > 0:
-                phrases.append(" ".join(current))
-                current = []
-        elif re.match(r"[a-z]+", w):
-            current.append(w)
-        else:
-            if len(current) > 0:
-                phrases.append(" ".join(current))
-                current = []
-
-    if current:
-        phrases.append(" ".join(current))
-
-    # Normalize multi-word to kebab-case
-    cleaned = []
-    for p in phrases:
-        p = p.strip()
-        if len(p) > 1:
-            cleaned.append(p.replace(" ", "-"))
-
-    return cleaned
-
-
-# --------------------------
-# Tag Suggestion Engine
-# --------------------------
-
-def suggest_tags_for_all_quotes(quotes, max_suggestions=8):
-    """Create relevance-weighted tag suggestions for each quote."""
-
-    # Global noun phrase frequency
-    global_phrases = Counter()
-    per_quote_phrases = []
-
-    for q in quotes:
-        np = extract_noun_phrases(q["text"])
-        per_quote_phrases.append(np)
-        global_phrases.update(np)
-
-    for i, q in enumerate(quotes):
-        local = per_quote_phrases[i]
-
-        scores = defaultdict(int)
-
-        for phrase, freq in global_phrases.items():
-            scores[phrase] += freq  # global weight
-
-        for phrase in local:
-            scores[phrase] += 5  # relevance boost
-
-        sorted_tags = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-        top_tags = [tag for tag, score in sorted_tags[:max_suggestions]]
-
-        q["suggested_tags"] = top_tags
-
-
-# --------------------------
-# Interactive Tagging
-# --------------------------
-
-def tag_quotes_interactively(quotes):
-    """Ask user for tags for each quote. Shows suggestions."""
-    print("\nTagging quotes…\n")
-
-    for i, quote in enumerate(quotes, start=1):
-        print(f"[{i}/{len(quotes)}]")
-        print("-" * 40)
-        print(quote["text"])
-        print("-" * 40)
-
-        print("Suggested tags:")
-        for tag in quote["suggested_tags"]:
-            print(f"  - {tag}")
-
-        tag_input = input("\nEnter tags (comma separated, Enter to skip): ").strip()
-
-        if not tag_input:
-            quote["tags"] = []  # include empty list
-            print("Tags skipped.\n")
-            continue
-
-        tags = []
-        for t in tag_input.split(","):
-            cleaned = t.strip().lower().replace(" ", "-")
-            if cleaned:
-                tags.append(cleaned)
-
-        quote["tags"] = tags
-        print(f"Saved tags: {tags}\n")
-
     return quotes
 
 
@@ -164,6 +82,7 @@ def write_quote_file(quote, metadata):
     slug = slugify(quote["text"][:80])
     filename = f"{slug}.md"
 
+    # YAML list for tags
     tag_block = "tags:\n" + "\n".join(f"  - {t}" for t in quote["tags"])
 
     content = f"""---
@@ -181,6 +100,7 @@ page: {quote['page']}
         f.write(content)
 
 
+
 def write_author_note(metadata):
     filename = f"{metadata['author_slug']}.md"
     content = f"""---
@@ -196,15 +116,24 @@ A short bio can go here.
 def write_source_note(metadata):
     filename = f"{metadata['source_slug']}.md"
 
-    tag_block = "tags:\n" + "\n".join(f"  - {t}" for t in metadata["tags"])
+    # Format YAML tag block
+    tag_block = ""
+    if metadata["tags"]:
+        tag_block = "tags:\n" + "\n".join(f"  - {t}" for t in metadata["tags"])
 
-    citation = f"\"{metadata['citation']}\"" if metadata["citation"] else ""
-    link = f"\"{metadata['link']}\"" if metadata["link"] else ""
+    # Quote citation safely
+    citation = metadata["citation"]
+    if citation:
+        citation = f"\"{citation}\""
+
+    link = metadata["link"]
+    if link:
+        link = f"\"{link}\""
 
     content = f"""---
 note-type: source
 {tag_block}
-author: {metadata['author']}
+author: "[[{metadata['author_slug']}]]"
 year: {metadata['year']}
 publisher: {metadata['publisher']}
 format: {metadata['format']}
@@ -230,6 +159,15 @@ Page xii | Highlight
 liberation of human attention may be the defining moral and political struggle of our time. Its
 success is prerequisite for the success of virtually all other struggles.
 
+Page 88 | Highlight
+people were computers, however, the appropriate description of the digital attention economy's
+incursions upon their processing capacities would be that of the distributed denial-of-service, or
+13
+Page 88 | Highlight Continued
+DDoS, attack. In a DDoS attack, the attacker controls many computers and uses them to send
+many repeated requests to the target computer, effectively overwhelming its capacity to
+communicate with any other computer.
+
 Page xii | Highlight
 We therefore have an obligation to rewire this system of intelligent, adversarial persuasion
 before it rewires us.
@@ -246,6 +184,36 @@ TEST_METADATA = {
     "format": "book"
 }
 
+def tag_quotes_interactively(quotes):
+    """Ask user for tags for each quote. Normalizes tag formatting."""
+    print("\nTagging quotes…\n")
+
+    for i, quote in enumerate(quotes, start=1):
+        print(f"[{i}/{len(quotes)}]")
+        print("-" * 40)
+        print(quote["text"])
+        print("-" * 40)
+
+        tag_input = input("Enter tags (comma separated, Enter to skip): ").strip()
+
+        if not tag_input:
+            # User skipped — but include empty list
+            quote["tags"] = []
+            print("Tags skipped.\n")
+            continue
+
+        # Normalize tags
+        tags = []
+        for t in tag_input.split(","):
+            cleaned = t.strip().lower().replace(" ", "-")
+            if cleaned:
+                tags.append(cleaned)
+
+        quote["tags"] = tags
+        print(f"Saved tags: {tags}\n")
+
+    return quotes
+
 
 # --------------------------
 # Main Program
@@ -254,7 +222,9 @@ TEST_METADATA = {
 def main():
 
     # --- Detect Test Mode ---
-    test_mode = len(sys.argv) > 1 and sys.argv[1] in ("--test", "-t")
+    test_mode = False
+    if len(sys.argv) > 1 and sys.argv[1] in ("--test", "-t"):
+        test_mode = True
 
     # -----------------------------------------
     # 1. Collect Highlights
@@ -278,7 +248,7 @@ def main():
     print(f"\nParsed {len(quotes)} quotes.\n")
 
     # -----------------------------------------
-    # 2. Metadata
+    # 2. Collect Metadata
     # -----------------------------------------
     if test_mode:
         metadata = TEST_METADATA.copy()
@@ -292,7 +262,7 @@ def main():
             "year": input("Year: ").strip(),
             "publisher": input("Publisher: ").strip(),
             "link": input("Link: ").strip(),
-            "citation": input("Citation (wrapped safely): ").strip(),
+            "citation": input("Citation (will be quoted safely): ").strip(),
             "tags": [],
             "format": "book"
         }
@@ -300,31 +270,32 @@ def main():
         tags_raw = input("Tags (comma separated): ").strip()
         metadata["tags"] = [t.strip() for t in tags_raw.split(",")] if tags_raw else []
 
+    # --- Create Slugs for Linking ---
     metadata["author_slug"] = slugify(metadata["author"])
     metadata["source_slug"] = slugify(metadata["title"])
 
     # -----------------------------------------
-    # 3. Generate Tag Suggestions
+    # 3. Tag quotes interactively
     # -----------------------------------------
-    suggest_tags_for_all_quotes(quotes)
-
-    # -----------------------------------------
-    # 4. Interactive Tagging (or test auto-tag)
-    # -----------------------------------------
-    if test_mode:
-        for q in quotes:
-            q["tags"] = q["suggested_tags"]
-        print("\nAssigned suggested tags automatically (test mode).\n")
-    else:
+    if not test_mode:
         quotes = tag_quotes_interactively(quotes)
+    else:
+        # In test mode, assign empty tags automatically
+        for q in quotes:
+            q["tags"] = []
+
+
 
     # -----------------------------------------
-    # 5. Write Files
+    # 4. Create Output Directory
     # -----------------------------------------
-    output_dir = Path("output")
-    output_dir.mkdir(exist_ok=True)
+    output_dir = Path("../../scribsidian_outputs").resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
     os.chdir(output_dir)
 
+    # -----------------------------------------
+    # 5. Write Notes
+    # -----------------------------------------
     write_author_note(metadata)
     write_source_note(metadata)
 
