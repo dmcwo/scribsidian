@@ -131,12 +131,12 @@ class QuoteInputScreen(Screen):
     }
 
     #quote-area-container {
-        height: 100%;
+        height: 1fr;
         padding: 0 2;
     }
 
     #quote-area {
-        height: 100%;
+        height: 1fr;
         border: solid $primary;
     }
 
