@@ -139,7 +139,7 @@ class QuoteInputScreen(Screen):
     }
 
     #footer-box {
-        height: 7;
+        height: 4;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -147,7 +147,6 @@ class QuoteInputScreen(Screen):
 
     #button-row {
         align: center middle;
-        margin-top: 1;
     }
 
     Button {
@@ -184,7 +183,6 @@ class QuoteInputScreen(Screen):
         )
 
         yield Container(
-            Static("Paste your Kindle highlights above.", id="instructions"),
             Horizontal(
                 Button("Continue →", variant="primary", id="continue-btn"),
                 Button("Cancel", variant="default", id="cancel-btn"),
@@ -241,7 +239,7 @@ class MetadataScreen(Screen):
     }
 
     #header-box {
-        height: 3;
+        height: 4;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -271,7 +269,7 @@ class MetadataScreen(Screen):
     }
 
     #footer-box {
-        height: 5;
+        height: 4;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -279,7 +277,6 @@ class MetadataScreen(Screen):
 
     #button-row {
         align: center middle;
-        margin-top: 1;
     }
 
     Button {
@@ -324,7 +321,6 @@ class MetadataScreen(Screen):
         )
 
         yield Container(
-            Static("Fill in the source metadata above.", id="instructions"),
             Horizontal(
                 Button("← Back", variant="default", id="back-btn"),
                 Button("Continue →", variant="primary", id="continue-btn"),
@@ -402,7 +398,7 @@ class TagQuotesScreen(Screen):
     }
 
     #header-box {
-        height: 3;
+        height: 4;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -463,7 +459,7 @@ class TagQuotesScreen(Screen):
     }
 
     #footer-box {
-        height: 6;
+        height: 5;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -471,7 +467,6 @@ class TagQuotesScreen(Screen):
 
     #button-row {
         align: center middle;
-        margin-top: 1;
     }
 
     Button {
@@ -516,7 +511,7 @@ class TagQuotesScreen(Screen):
         )
 
         yield Container(
-            Static("Use checkboxes or add custom tags. Press 'n' for next, 'p' for previous.", id="instructions"),
+            Static("Press 'n' for next, 'p' for previous, or use buttons below.", id="instructions"),
             Horizontal(
                 Button("← Back", variant="default", id="back-btn"),
                 Button("Skip All →", variant="default", id="skip-btn"),
