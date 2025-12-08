@@ -5,6 +5,7 @@ import re
 import sys
 import unicodedata
 from pathlib import Path
+from collections import Counter, defaultdict
 
 # --------------------------
 # Utility Functions
@@ -27,7 +28,89 @@ def clean_text(text):
 
 
 # --------------------------
-# Quote Parsing
+# Noun Phrase Extraction & Tag Suggestion Engine
+# --------------------------
+
+STOPWORDS = {
+    "the", "and", "of", "to", "in", "for", "on", "at", "a", "an", "is", "are",
+    "it", "its", "this", "that", "as", "with", "be", "by", "from", "we", "you",
+    "our", "their", "your", "but", "or", "into", "over", "may", "been", "were",
+    "however", "than"
+}
+
+def extract_noun_phrases(text):
+    """
+    Heuristic extractor for multi-word noun/adjective phrases.
+    Returns phrases in kebab-case (e.g., "human-attention").
+    """
+    # Lowercase and keep alphabetic tokens and hyphens/apostrophes
+    words = re.findall(r"[a-zA-Z\-']+", text.lower())
+
+    phrases = []
+    current = []
+
+    for w in words:
+        if w in STOPWORDS:
+            if len(current) > 0:
+                phrases.append(" ".join(current))
+                current = []
+        elif re.match(r"[a-z]+", w):
+            current.append(w)
+        else:
+            if len(current) > 0:
+                phrases.append(" ".join(current))
+                current = []
+
+    if current:
+        phrases.append(" ".join(current))
+
+    # Normalize multi-word to kebab-case and filter short fragments
+    cleaned = []
+    for p in phrases:
+        p = p.strip()
+        if len(p) > 1:
+            cleaned.append(p.replace(" ", "-"))
+
+    return cleaned
+
+
+def suggest_tags_for_all_quotes(quotes, max_suggestions=8):
+    """
+    Build relevance-weighted suggestions for each quote by combining:
+    - global phrase frequency across all quotes (global weight)
+    - a local relevance boost for phrases that appear in the specific quote
+    Results stored in quote["suggested_tags"] as a list of kebab-case tags.
+    """
+    # Collect per-quote phrases and global counts
+    global_phrases = Counter()
+    per_quote_phrases = []
+
+    for q in quotes:
+        np_list = extract_noun_phrases(q["text"])
+        per_quote_phrases.append(np_list)
+        global_phrases.update(np_list)
+
+    for i, q in enumerate(quotes):
+        local = per_quote_phrases[i]
+        scores = defaultdict(int)
+
+        # global weight
+        for phrase, freq in global_phrases.items():
+            scores[phrase] += freq
+
+        # local relevance boost
+        for phrase in local:
+            scores[phrase] += 5
+
+        # sort by score descending, then phrase alphabetical for determinism
+        sorted_tags = sorted(scores.items(), key=lambda x: (-x[1], x[0]))
+        top_tags = [tag for tag, score in sorted_tags[:max_suggestions]]
+
+        q["suggested_tags"] = top_tags
+
+
+# --------------------------
+# Quote Parsing (your improved version)
 # --------------------------
 
 def clean_quote_text(text):
@@ -62,7 +145,7 @@ def parse_quotes(raw_text):
 
     quotes = []
     for page, text in matches:
-        # Clean page number - extract just the number
+        # Clean page number - extract just the number if present
         page_clean = page.strip()
         page_match = re.search(r'(\d+)', page_clean)
         page_number = page_match.group(1) if page_match else page_clean
@@ -82,8 +165,11 @@ def write_quote_file(quote, metadata):
     slug = slugify(quote["text"][:80])
     filename = f"{slug}.md"
 
-    # YAML list for tags
-    tag_block = "tags:\n" + "\n".join(f"  - {t}" for t in quote["tags"])
+    # YAML list for tags (always include tags: block; empty list if no tags)
+    tag_block = "tags:\n" + "\n".join(f"  - {t}" for t in quote.get("tags", []))
+    if not quote.get("tags"):
+        # ensure there's a placeholder empty item so YAML keeps the field visible
+        tag_block = "tags:\n  -\n"
 
     content = f"""---
 note-type: quote
@@ -98,7 +184,6 @@ page: {quote['page']}
 
     with open(filename, "w") as f:
         f.write(content)
-
 
 
 def write_author_note(metadata):
@@ -185,7 +270,7 @@ TEST_METADATA = {
 }
 
 def tag_quotes_interactively(quotes):
-    """Ask user for tags for each quote. Normalizes tag formatting."""
+    """Ask user for tags for each quote. Normalizes tag formatting and shows suggestions."""
     print("\nTagging quotes…\n")
 
     for i, quote in enumerate(quotes, start=1):
@@ -194,7 +279,14 @@ def tag_quotes_interactively(quotes):
         print(quote["text"])
         print("-" * 40)
 
-        tag_input = input("Enter tags (comma separated, Enter to skip): ").strip()
+        # show suggested tags if present
+        suggested = quote.get("suggested_tags", [])
+        if suggested:
+            print("Suggested tags:")
+            for tag in suggested:
+                print(f"  - {tag}")
+
+        tag_input = input("\nEnter tags (comma separated, Enter to skip): ").strip()
 
         if not tag_input:
             # User skipped — but include empty list
@@ -275,26 +367,30 @@ def main():
     metadata["source_slug"] = slugify(metadata["title"])
 
     # -----------------------------------------
-    # 3. Tag quotes interactively
+    # 3. Suggest tags for quotes (global + local)
+    # -----------------------------------------
+    suggest_tags_for_all_quotes(quotes)
+
+    # -----------------------------------------
+    # 4. Tag quotes interactively
     # -----------------------------------------
     if not test_mode:
         quotes = tag_quotes_interactively(quotes)
     else:
-        # In test mode, assign empty tags automatically
+        # In test mode, assign ALL suggested tags automatically
         for q in quotes:
-            q["tags"] = []
-
-
+            q["tags"] = q.get("suggested_tags", [])
+        print("\nAssigned suggested tags automatically (test mode).\n")
 
     # -----------------------------------------
-    # 4. Create Output Directory
+    # 5. Create Output Directory
     # -----------------------------------------
     output_dir = Path("../../scribsidian_outputs").resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     os.chdir(output_dir)
 
     # -----------------------------------------
-    # 5. Write Notes
+    # 6. Write Notes
     # -----------------------------------------
     write_author_note(metadata)
     write_source_note(metadata)
