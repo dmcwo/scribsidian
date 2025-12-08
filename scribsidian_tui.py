@@ -147,6 +147,8 @@ class QuoteInputScreen(Screen):
 
     #button-row {
         align: center middle;
+        height: auto;
+        width: 100%;
     }
 
     Button {
@@ -277,6 +279,8 @@ class MetadataScreen(Screen):
 
     #button-row {
         align: center middle;
+        height: auto;
+        width: 100%;
     }
 
     Button {
@@ -467,6 +471,8 @@ class TagQuotesScreen(Screen):
 
     #button-row {
         align: center middle;
+        height: auto;
+        width: 100%;
     }
 
     Button {
