@@ -117,7 +117,7 @@ class QuoteInputScreen(Screen):
     }
 
     #header-box {
-        height: 5;
+        height: auto;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -130,15 +130,18 @@ class QuoteInputScreen(Screen):
 
     #quote-area {
         height: 1fr;
+        max-height: 70%;
         border: solid $primary;
         margin: 1 2;
     }
 
     #footer-box {
-        height: 5;
+        height: auto;
+        min-height: 7;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
+        dock: bottom;
     }
 
     #button-row {
