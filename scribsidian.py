@@ -311,12 +311,11 @@ def tag_quotes_interactively(quotes):
 # Main Program
 # --------------------------
 
-def main():
-
-    # --- Detect Test Mode ---
-    test_mode = False
-    if len(sys.argv) > 1 and sys.argv[1] in ("--test", "-t"):
-        test_mode = True
+def main_simple(test_mode=False):
+    """
+    Original simple CLI mode.
+    Preserved with --simple flag for users who prefer the traditional interface.
+    """
 
     # -----------------------------------------
     # 1. Collect Highlights
@@ -404,6 +403,51 @@ def main():
 # --------------------------
 # Run
 # --------------------------
+
+def main():
+    """
+    Entry point - parses flags and launches appropriate mode.
+
+    Usage:
+        python scribsidian.py              # Launch TUI (default)
+        python scribsidian.py --simple     # Simple CLI mode
+        python scribsidian.py --test       # TUI with test data
+        python scribsidian.py --simple -t  # Simple CLI with test data
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Scribsidian - Convert Kindle highlights to Obsidian notes"
+    )
+    parser.add_argument(
+        "--simple",
+        action="store_true",
+        help="Use simple CLI mode (no TUI)"
+    )
+    parser.add_argument(
+        "-t", "--test",
+        action="store_true",
+        help="Load test data"
+    )
+
+    args = parser.parse_args()
+
+    if args.simple:
+        # Run original simple CLI mode
+        main_simple(test_mode=args.test)
+    else:
+        # Run TUI mode (default)
+        try:
+            from scribsidian_tui import run_tui
+            run_tui(test_mode=args.test)
+        except ImportError as e:
+            print("\n❌ Error: Textual library not found!")
+            print("Please install dependencies:")
+            print("  pip install -r requirements.txt")
+            print("\nOr use simple mode:")
+            print("  python scribsidian.py --simple")
+            sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

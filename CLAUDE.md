@@ -2,10 +2,11 @@
 
 ## Project Overview
 
-**Scribsidian** is a tool for converting Kindle highlights into Obsidian-compatible markdown notes with rich metadata and bi-directional linking. The project provides two implementations:
+**Scribsidian** is a tool for converting Kindle highlights into Obsidian-compatible markdown notes with rich metadata and bi-directional linking. The project provides three implementations:
 
-1. **Python CLI Tool** (`scribsidian.py`) - Command-line interface for batch processing
-2. **React Web App** (`kindle-to-obsidian.tsx`) - Interactive web interface with AI-powered features
+1. **Python TUI** (`scribsidian.py` + `scribsidian_tui.py`) - Terminal User Interface with interactive screens (default)
+2. **Python Simple CLI** (`scribsidian.py --simple`) - Traditional command-line interface for batch processing
+3. **React Web App** (`kindle-to-obsidian.tsx`) - Interactive web interface with AI-powered features
 
 ### Purpose
 
@@ -20,8 +21,10 @@ Transform Kindle highlights into a connected knowledge graph by:
 
 ```
 scribsidian/
-├── scribsidian.py           # Python CLI tool
+├── scribsidian.py           # Python CLI entry point & core functions
+├── scribsidian_tui.py       # Terminal User Interface (Textual)
 ├── kindle-to-obsidian.tsx   # React web application
+├── requirements.txt         # Python dependencies (textual)
 ├── output/                  # Legacy output directory (deprecated)
 ├── .git/                    # Git repository
 ├── .gitattributes          # Git configuration
@@ -118,13 +121,17 @@ A short bio can go here.
 ### Usage
 
 ```bash
-# Interactive mode
+# TUI mode (default) - Interactive terminal UI
 python scribsidian.py
 
-# Test mode (uses built-in test data)
+# TUI with test data
 python scribsidian.py --test
-# or
-python scribsidian.py -t
+
+# Simple CLI mode (original interface)
+python scribsidian.py --simple
+
+# Simple CLI with test data
+python scribsidian.py --simple --test
 ```
 
 ### Tag Suggestion Engine
@@ -159,6 +166,221 @@ Test mode uses sample data from "Stand Out of Our Light" by James Williams, incl
 - Complete metadata with tags: attention, ethics, politics, liberation
 - DOI link and full citation
 - Automatic tag suggestion and assignment
+
+## Python TUI (`scribsidian_tui.py`)
+
+### Overview
+
+The Terminal User Interface (TUI) provides a modern, interactive experience for converting Kindle highlights to Obsidian notes. Built with [Textual](https://textual.textualize.io/), it offers a visual, app-like interface in the terminal with panels, buttons, checkboxes, and keyboard shortcuts.
+
+**Why TUI?**
+- **Visual feedback**: See quote counts, progress, and previews in real-time
+- **Easier data entry**: Form-based metadata input with validation
+- **Interactive tagging**: Checkboxes for suggested tags with per-quote navigation
+- **Better UX**: Navigate between steps, go back to edit, preview before generating
+- **Keyboard shortcuts**: Efficient navigation with arrow keys, tab, enter, and hotkeys
+
+### Installation
+
+The TUI requires the `textual` library:
+
+```bash
+pip install -r requirements.txt
+```
+
+If textual is not installed, the tool falls back gracefully with a helpful error message suggesting either installation or using `--simple` mode.
+
+### Architecture
+
+The TUI is organized into 6 screens with a step-based wizard flow:
+
+**Screens:**
+1. **WelcomeScreen** - Introduction with Start/Load Test Data/Quit buttons
+2. **QuoteInputScreen** - Large text area for pasting Kindle highlights with live quote count
+3. **MetadataScreen** - Form inputs for title, author, year, publisher, link, citation, tags
+4. **TagQuotesScreen** - Per-quote tagging interface with checkboxes for suggested tags
+5. **ReviewScreen** - Summary of all data with statistics before file generation
+6. **CompletedScreen** - Success message with output path and Done button
+
+**Components:**
+- `ScribsidianApp` - Main application class that manages screen stack
+- Each screen extends `textual.screen.Screen` with custom CSS styling
+- Reuses core functions from `scribsidian.py`: `parse_quotes()`, `suggest_tags_for_all_quotes()`, `write_*_file()`
+
+### Screen Flow
+
+```
+Welcome
+   ↓ [Start] or [Load Test Data]
+Quote Input (paste highlights, shows count)
+   ↓ [Continue →]
+Metadata (form for source info)
+   ↓ [Continue →] (auto-generates tag suggestions)
+Tag Quotes (checkbox selection, custom tags, navigate with n/p)
+   ↓ [Continue →] or [Skip All →]
+Review (summary stats, file list)
+   ↓ [Generate Files ✨]
+Completed (success message)
+   ↓ [Done]
+Exit
+```
+
+### Key Features
+
+**1. Quote Input Screen**
+- Large text area with syntax highlighting
+- Real-time quote count updates as you type
+- Auto-loads test data in test mode
+- Back button to return to welcome
+
+**2. Metadata Screen**
+- Labeled form inputs for all metadata fields
+- Required field validation (title, author)
+- Auto-fills with test data in test mode
+- Scrollable container for long forms
+
+**3. Tag Quotes Screen** (Interactive Tagging)
+- Shows one quote at a time with page number
+- Displays suggested tags as checkboxes
+- Custom tag input for additional tags
+- Keyboard shortcuts:
+  - `n` - Next quote
+  - `p` - Previous quote
+  - `Space` - Toggle checkbox
+  - `Tab` - Navigate between inputs
+  - `Esc` - Go back
+- Progress indicator: "Tag Quotes (3/15)"
+- "Skip All" button to bypass tagging
+
+**4. Review Screen**
+- Source metadata summary
+- Quote statistics (total, tagged, untagged)
+- List of files to be generated
+- Output directory path
+- Final chance to go back and edit
+
+**5. Completed Screen**
+- Success message with file count
+- Full output directory path
+- Clean exit
+
+### Keyboard Shortcuts
+
+**Global:**
+- `Esc` - Go back to previous screen
+- `Ctrl+C` - Quit application
+
+**Tag Quotes Screen:**
+- `n` - Next quote (also saves current tags)
+- `p` - Previous quote (also saves current tags)
+- `Space` - Toggle checkbox selection
+- `Tab` / `Shift+Tab` - Navigate between checkboxes and inputs
+
+**All Screens:**
+- `Tab` - Navigate between interactive elements
+- `Enter` - Activate buttons
+- `Arrow keys` - Navigate in scrollable areas
+
+### Styling
+
+The TUI uses Textual's CSS-like styling system:
+
+**Design Principles:**
+- Border boxes for visual hierarchy
+- Primary color accents for headers and important elements
+- Consistent padding and margins
+- Scrollable containers for long content
+- Button variants: primary (green), default (blue), error (red), success (green)
+
+**Color Scheme:**
+- Uses terminal's default theme
+- `$accent` - Highlighted text (titles, labels)
+- `$primary` - Borders and primary buttons
+- `$success` - Success messages and final button
+- `$text-muted` - Secondary text (e.g., page numbers)
+
+### Integration with Core Functions
+
+The TUI imports and reuses all core functionality from `scribsidian.py`:
+
+```python
+from scribsidian import (
+    parse_quotes,              # Quote parsing with regex
+    suggest_tags_for_all_quotes, # Tag suggestion engine
+    write_quote_file,          # File generation
+    write_author_note,
+    write_source_note,
+    slugify,                   # Slug generation
+    TEST_QUOTES,               # Test data
+    TEST_METADATA
+)
+```
+
+This ensures consistency between TUI and simple CLI modes - both generate identical output files.
+
+### Test Mode
+
+Launch TUI with test data pre-loaded:
+
+```bash
+python scribsidian.py --test
+```
+
+This skips the welcome screen and loads directly into Quote Input Screen with test highlights from "Stand Out of Our Light" by James Williams.
+
+### Error Handling
+
+- **Missing textual**: Graceful fallback with installation instructions
+- **Empty quotes**: Warning notification if user tries to continue without pasting highlights
+- **Required fields**: Validation for title and author in metadata form
+- **File generation errors**: Exception handling with error notifications
+
+### Development Notes
+
+**Adding New Screens:**
+1. Create screen class extending `Screen`
+2. Define CSS in class `CSS` attribute
+3. Implement `compose()` for layout
+4. Add button handlers in `on_button_pressed()`
+5. Update screen navigation to include new screen
+
+**Modifying Layout:**
+- Edit CSS string in screen class
+- Use Textual containers: `Container`, `Vertical`, `Horizontal`, `ScrollableContainer`
+- Widgets available: `Button`, `Input`, `TextArea`, `Checkbox`, `Label`, `Static`, `DataTable`
+
+**Hot Reload:**
+Textual supports hot reload during development:
+```bash
+textual run --dev scribsidian_tui.py
+```
+
+### Comparison with Simple CLI
+
+| Feature | TUI Mode | Simple CLI Mode |
+|---------|----------|----------------|
+| Interface | Visual, multi-screen | Text prompts |
+| Navigation | Buttons, back/forward | Linear, no back |
+| Quote input | Text area with live count | stdin with Ctrl-D |
+| Metadata | Form with labels | Sequential prompts |
+| Tagging | Checkboxes, per-quote | Text input, per-quote |
+| Preview | Review screen before generating | No preview |
+| Dependencies | Requires `textual` | No dependencies |
+| Use case | Interactive sessions | Scripting, automation |
+
+**When to use Simple CLI:**
+- Piping input from other commands
+- Scripting and automation
+- Headless environments
+- Minimal dependencies desired
+- Old terminals without full TUI support
+
+**When to use TUI:**
+- Interactive manual sessions
+- First-time users
+- Complex books with many quotes
+- When you want to review before generating
+- Modern terminals with full Unicode support
 
 ## React Web App (`kindle-to-obsidian.tsx`)
 
@@ -547,13 +769,25 @@ Paste quotes → Parse quotes → AI/Manual source entry → Review → Add tags
 
 ### Feature Parity Status
 
-**Python CLI Features:**
+**Python TUI Features:**
 - ✅ Quote parsing with "Highlight Continued" support
 - ✅ Tag suggestion engine with noun phrase extraction
-- ✅ Interactive per-quote tagging
+- ✅ Interactive per-quote tagging with checkboxes
+- ✅ Source-level tags
+- ✅ YAML frontmatter generation
+- ✅ Test mode with pre-filled data
+- ✅ Visual wizard interface with 6 screens
+- ✅ Back navigation and review before generating
+- ✅ Keyboard shortcuts and form validation
+
+**Python Simple CLI Features:**
+- ✅ Quote parsing with "Highlight Continued" support
+- ✅ Tag suggestion engine with noun phrase extraction
+- ✅ Interactive per-quote tagging (text-based)
 - ✅ Source-level tags
 - ✅ YAML frontmatter generation
 - ✅ Test mode with automatic tag assignment
+- ✅ No dependencies (stdlib only)
 
 **React Web App Features:**
 - ✅ Quote parsing (basic)
@@ -582,13 +816,15 @@ When contributing to this project:
 ## Resources
 
 **Dependencies:**
-- Python: Standard library only (re, os, sys, unicodedata, pathlib)
+- Python Core: Standard library only (re, os, sys, unicodedata, pathlib, argparse)
+- Python TUI: textual>=0.47.0 (optional, falls back to simple mode if not installed)
 - React: React 18+, Lucide icons, Tailwind CSS
 - API: Anthropic Claude (claude-sonnet-4-20250514)
 
 **External Links:**
 - [Obsidian](https://obsidian.md/) - Target note-taking application
 - [Anthropic API](https://docs.anthropic.com/) - AI integration
+- [Textual](https://textual.textualize.io/) - TUI framework for Python
 - [Kindle Highlights](https://read.amazon.com/notebook) - Source of highlights
 
 **Related Formats:**
@@ -604,19 +840,31 @@ When contributing to this project:
 
 ## Recent Changes (December 7-8, 2025)
 
-### Tag Suggestion Engine (Python CLI)
+### Terminal User Interface (December 8, 2025)
+- **New TUI Implementation**: Built comprehensive terminal UI using Textual framework
+- **6-Screen Wizard**: Welcome → Quote Input → Metadata → Tag Quotes → Review → Complete
+- **Interactive Tagging**: Checkbox-based tag selection with keyboard navigation (n/p keys)
+- **Visual Feedback**: Real-time quote counts, progress indicators, validation messages
+- **Dual Mode Support**: Added `--simple` flag to preserve original CLI while making TUI default
+- **Graceful Fallback**: Clear error message if textual not installed, suggesting simple mode
+- **Test Mode**: `--test` flag now works in both TUI and simple modes
+- **New Files**: `scribsidian_tui.py` (TUI implementation), `requirements.txt` (dependencies)
+- **Code Reuse**: TUI imports and reuses all core functions from scribsidian.py
+- **Enhanced UX**: Back navigation, review screen, keyboard shortcuts, form validation
+
+### Tag Suggestion Engine (December 7, 2025)
 - Added heuristic noun phrase extraction with stopword filtering
 - Implemented relevance scoring combining global frequency and local context
 - Created interactive tagging workflow with suggestions displayed
 - Modified test mode to automatically assign suggested tags
 - Added comprehensive tag normalization (lowercase, kebab-case)
 
-### Quote Parsing Improvements (Python CLI)
+### Quote Parsing Improvements (December 7, 2025)
 - Enhanced "Highlight Continued" preprocessing to merge split quotes
 - Improved page number extraction and cleaning
 - Better handling of multi-page highlights
 
-### Note Structure Updates (Python CLI)
+### Note Structure Updates (December 7, 2025)
 - Quote notes now include `tags:` field in YAML frontmatter
 - Empty tag lists preserved with placeholder syntax
 - Consistent tag formatting across all note types
