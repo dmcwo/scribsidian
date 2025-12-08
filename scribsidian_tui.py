@@ -113,13 +113,11 @@ class QuoteInputScreen(Screen):
 
     CSS = """
     QuoteInputScreen {
-        layout: grid;
-        grid-size: 1 3;
-        grid-rows: auto 1fr auto;
+        layout: vertical;
     }
 
     #header-box {
-        height: auto;
+        height: 5;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -132,16 +130,16 @@ class QuoteInputScreen(Screen):
 
     #quote-area-container {
         height: 1fr;
-        padding: 0 2;
+        padding: 1 2;
     }
 
     #quote-area {
-        height: 1fr;
+        height: 100%;
         border: solid $primary;
     }
 
     #footer-box {
-        height: auto;
+        height: 7;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
