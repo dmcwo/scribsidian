@@ -82,11 +82,15 @@ def write_quote_file(quote, metadata):
     slug = slugify(quote["text"][:80])
     filename = f"{slug}.md"
 
+    # YAML list for tags
+    tag_block = "tags:\n" + "\n".join(f"  - {t}" for t in quote["tags"])
+
     content = f"""---
 note-type: quote
 source: "[[{metadata['source_slug']}]]"
 author: "[[{metadata['author_slug']}]]"
-page: "{quote['page']}"
+{tag_block}
+page: {quote['page']}
 ---
 
 > {quote['text']}
@@ -94,6 +98,7 @@ page: "{quote['page']}"
 
     with open(filename, "w") as f:
         f.write(content)
+
 
 
 def write_author_note(metadata):
@@ -179,6 +184,36 @@ TEST_METADATA = {
     "format": "book"
 }
 
+def tag_quotes_interactively(quotes):
+    """Ask user for tags for each quote. Normalizes tag formatting."""
+    print("\nTagging quotes…\n")
+
+    for i, quote in enumerate(quotes, start=1):
+        print(f"[{i}/{len(quotes)}]")
+        print("-" * 40)
+        print(quote["text"])
+        print("-" * 40)
+
+        tag_input = input("Enter tags (comma separated, Enter to skip): ").strip()
+
+        if not tag_input:
+            # User skipped — but include empty list
+            quote["tags"] = []
+            print("Tags skipped.\n")
+            continue
+
+        # Normalize tags
+        tags = []
+        for t in tag_input.split(","):
+            cleaned = t.strip().lower().replace(" ", "-")
+            if cleaned:
+                tags.append(cleaned)
+
+        quote["tags"] = tags
+        print(f"Saved tags: {tags}\n")
+
+    return quotes
+
 
 # --------------------------
 # Main Program
@@ -240,14 +275,26 @@ def main():
     metadata["source_slug"] = slugify(metadata["title"])
 
     # -----------------------------------------
-    # 3. Create Output Directory
+    # 3. Tag quotes interactively
+    # -----------------------------------------
+    if not test_mode:
+        quotes = tag_quotes_interactively(quotes)
+    else:
+        # In test mode, assign empty tags automatically
+        for q in quotes:
+            q["tags"] = []
+
+
+
+    # -----------------------------------------
+    # 4. Create Output Directory
     # -----------------------------------------
     output_dir = Path("../../scribsidian_outputs").resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     os.chdir(output_dir)
 
     # -----------------------------------------
-    # 4. Write Notes
+    # 5. Write Notes
     # -----------------------------------------
     write_author_note(metadata)
     write_source_note(metadata)
