@@ -30,15 +30,46 @@ def clean_text(text):
 # Quote Parsing
 # --------------------------
 
-QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight\s*\n(.*?)\n(?=Page|\Z)"
+def clean_quote_text(text):
+    """Clean quote text by removing embedded page markers and normalizing whitespace."""
+    # Remove standalone page numbers that appear mid-quote (e.g., "Page 89")
+    text = re.sub(r'Page\s+\d+\s*$', '', text)
+
+    # Collapse PDF line breaks and excess whitespace
+    text = text.replace("\n", " ")
+    text = re.sub(r'\s+', ' ', text)
+
+    return text.strip()
 
 def parse_quotes(raw_text):
+    """
+    Parse Kindle highlights from raw text.
+
+    Preprocessing step: Remove "Highlight Continued" lines to merge split quotes.
+    This handles cases where a quote is split across pages with "Highlight Continued".
+    """
+    # Remove standalone page numbers followed by "Highlight Continued"
+    # Pattern: "\n13\nPage 88 | Highlight Continued\n" → "\n"
+    raw_text = re.sub(r'\n\d+\s*\nPage\s+\d+\s*\|\s*Highlight\s+Continued\s*\n', '\n', raw_text)
+
+    # Remove any remaining "Page X | Highlight Continued" lines
+    # Pattern: "\nPage 88 | Highlight Continued\n" → "\n"
+    raw_text = re.sub(r'\nPage\s+\d+\s*\|\s*Highlight\s+Continued\s*\n', '\n', raw_text)
+
+    # Now parse quotes (only matches "Highlight", not "Highlight Continued" since we removed those)
+    QUOTE_PATTERN = r"Page\s+(.*?)\s*\|\s*Highlight\s*\n(.*?)(?=\nPage\s+|\Z)"
     matches = re.findall(QUOTE_PATTERN, raw_text, re.DOTALL)
+
     quotes = []
     for page, text in matches:
+        # Clean page number - extract just the number
+        page_clean = page.strip()
+        page_match = re.search(r'(\d+)', page_clean)
+        page_number = page_match.group(1) if page_match else page_clean
+
         quotes.append({
-            "page": page.strip(),
-            "text": clean_text(text),
+            "page": page_number,
+            "text": clean_quote_text(text),
         })
     return quotes
 
@@ -55,7 +86,7 @@ def write_quote_file(quote, metadata):
 note-type: quote
 source: "[[{metadata['source_slug']}]]"
 author: "[[{metadata['author_slug']}]]"
-page: {quote['page']}
+page: "{quote['page']}"
 ---
 
 > {quote['text']}
@@ -122,6 +153,15 @@ TEST_QUOTES = """
 Page xii | Highlight
 liberation of human attention may be the defining moral and political struggle of our time. Its
 success is prerequisite for the success of virtually all other struggles.
+
+Page 88 | Highlight
+people were computers, however, the appropriate description of the digital attention economy's
+incursions upon their processing capacities would be that of the distributed denial-of-service, or
+13
+Page 88 | Highlight Continued
+DDoS, attack. In a DDoS attack, the attacker controls many computers and uses them to send
+many repeated requests to the target computer, effectively overwhelming its capacity to
+communicate with any other computer.
 
 Page xii | Highlight
 We therefore have an obligation to rewire this system of intelligent, adversarial persuasion
@@ -202,8 +242,8 @@ def main():
     # -----------------------------------------
     # 3. Create Output Directory
     # -----------------------------------------
-    output_dir = Path("../../scribsidian_output")
-    output_dir.mkdir(exist_ok=True)
+    output_dir = Path("../../scribsidian_outputs").resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
     os.chdir(output_dir)
 
     # -----------------------------------------
