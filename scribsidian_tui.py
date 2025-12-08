@@ -139,7 +139,7 @@ class QuoteInputScreen(Screen):
     }
 
     #footer-box {
-        height: 4;
+        height: 7;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -149,6 +149,7 @@ class QuoteInputScreen(Screen):
         align: center middle;
         height: auto;
         width: 100%;
+        margin-top: 1;
     }
 
     Button {
@@ -271,7 +272,7 @@ class MetadataScreen(Screen):
     }
 
     #footer-box {
-        height: 4;
+        height: 7;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -281,6 +282,7 @@ class MetadataScreen(Screen):
         align: center middle;
         height: auto;
         width: 100%;
+        margin-top: 1;
     }
 
     Button {
@@ -463,7 +465,7 @@ class TagQuotesScreen(Screen):
     }
 
     #footer-box {
-        height: 5;
+        height: 8;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -473,6 +475,7 @@ class TagQuotesScreen(Screen):
         align: center middle;
         height: auto;
         width: 100%;
+        margin-top: 1;
     }
 
     Button {
