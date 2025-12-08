@@ -113,7 +113,9 @@ class QuoteInputScreen(Screen):
 
     CSS = """
     QuoteInputScreen {
-        layout: vertical;
+        layout: grid;
+        grid-size: 1 3;
+        grid-rows: auto 1fr auto;
     }
 
     #header-box {
@@ -128,20 +130,21 @@ class QuoteInputScreen(Screen):
         color: $accent;
     }
 
+    #quote-area-container {
+        height: 100%;
+        padding: 0 2;
+    }
+
     #quote-area {
-        height: 1fr;
-        max-height: 70%;
+        height: 100%;
         border: solid $primary;
-        margin: 1 2;
     }
 
     #footer-box {
         height: auto;
-        min-height: 7;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
-        dock: bottom;
     }
 
     #button-row {
@@ -177,7 +180,10 @@ class QuoteInputScreen(Screen):
         else:
             text_area.text = ""
 
-        yield text_area
+        yield Container(
+            text_area,
+            id="quote-area-container"
+        )
 
         yield Container(
             Static("Paste your Kindle highlights above.", id="instructions"),
