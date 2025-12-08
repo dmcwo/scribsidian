@@ -50,6 +50,9 @@ The output directory contains generated markdown files organized into three type
 - `slugify()` - Convert text to URL-friendly slugs (max 60 chars)
 - `clean_text()` - Collapse PDF line breaks and normalize whitespace
 - `parse_quotes()` - Extract quotes using regex pattern matching
+- `extract_noun_phrases()` - Heuristic extraction of multi-word noun/adjective phrases
+- `suggest_tags_for_all_quotes()` - Generate tag suggestions using global frequency + local relevance
+- `tag_quotes_interactively()` - Interactive tagging with AI-suggested tags displayed
 - `write_quote_file()` - Generate quote note with frontmatter
 - `write_author_note()` - Generate author placeholder note
 - `write_source_note()` - Generate source metadata note
@@ -60,7 +63,9 @@ The output directory contains generated markdown files organized into three type
 2. **Quote Parsing**: Use regex pattern to extract quotes (handles both "Highlight" and "Highlight Continued")
 3. **Metadata Collection**: Prompt for title, author, year, publisher, link, citation, tags
 4. **Slug Generation**: Create link-safe filenames from author and title
-5. **Output Generation**: Write three types of notes to `../../scribsidian_outputs/` directory
+5. **Tag Suggestion**: Analyze all quotes to suggest relevant tags using noun phrase extraction
+6. **Interactive Tagging**: Display suggested tags and prompt user to tag each quote
+7. **Output Generation**: Write three types of notes to `../../scribsidian_outputs/` directory
 
 ### Note Structure
 
@@ -70,11 +75,16 @@ The output directory contains generated markdown files organized into three type
 note-type: quote
 source: "[[source-slug]]"
 author: "[[author-slug]]"
+tags:
+  - tag1
+  - tag2
 page: X
 ---
 
 > Quote text here
 ```
+
+**Note**: Quote-level tags are supported in the Python CLI (with AI suggestions) but not yet implemented in the React web app.
 
 **Source Note:**
 ```yaml
@@ -117,12 +127,38 @@ python scribsidian.py --test
 python scribsidian.py -t
 ```
 
+### Tag Suggestion Engine
+
+The Python CLI includes an intelligent tag suggestion system that analyzes quote content to recommend relevant tags:
+
+**Algorithm:**
+- **Noun Phrase Extraction**: Identifies multi-word concepts using a stopword-filtered heuristic
+- **Global Frequency**: Counts phrase occurrences across all quotes in the collection
+- **Local Relevance Boost**: Adds weight (+5) to phrases that appear in the specific quote
+- **Scoring**: Combines global frequency with local relevance to rank suggestions
+- **Output Format**: Returns up to 8 kebab-case tags per quote (e.g., "human-attention", "digital-ethics")
+
+**Stopwords**: Common words (the, and, of, to, in, etc.) are filtered out to focus on meaningful concepts.
+
+**Interactive Workflow:**
+1. After parsing quotes, the system analyzes all quotes to build a corpus
+2. For each quote, it displays the quote text and suggested tags
+3. User can accept suggestions, modify them, or skip tagging
+4. Tags are normalized to lowercase kebab-case format
+5. Empty tag lists are preserved in YAML frontmatter
+
+**Test Mode Behavior:**
+- Automatically assigns all suggested tags without user interaction
+- Useful for rapid testing and iteration
+
 ### Test Mode
 
 Test mode uses sample data from "Stand Out of Our Light" by James Williams, including:
-- Two sample quotes (page xii highlights)
+- Three sample quotes (pages xii and 88)
+- One multi-page quote with "Highlight Continued" handling
 - Complete metadata with tags: attention, ethics, politics, liberation
 - DOI link and full citation
+- Automatic tag suggestion and assignment
 
 ## React Web App (`kindle-to-obsidian.tsx`)
 
@@ -240,7 +276,7 @@ fetch('https://api.anthropic.com/v1/messages', {
 
 ### Git Workflow
 
-Current branch: `claude/claude-md-miwbufj4ruqwjoj3-01UjNHjixLiKHwCwdPMBZRYH`
+Current branch: `claude/claude-md-mixbebttrbna1srd-01J7xKtxz8x4xBFTnNDb55vb`
 
 **Commit Standards:**
 - Use descriptive commit messages
@@ -451,8 +487,12 @@ Paste quotes → Parse quotes → AI/Manual source entry → Review → Add tags
 - Import from other highlight formats (PDF, etc.)
 - SQLite database for note tracking
 - Better error handling and validation
+- Machine learning-based tag classification
+- Integration with external tag vocabularies (e.g., Library of Congress Subject Headings)
 
 **React Web App:**
+- **Port tag suggestion engine from Python** (high priority for feature parity)
+- **Per-quote tagging UI** (high priority for feature parity)
 - Backend API for secure Claude integration
 - User accounts and saved conversions
 - Direct Obsidian vault integration
@@ -462,6 +502,7 @@ Paste quotes → Parse quotes → AI/Manual source entry → Review → Add tags
 - Preview mode for generated notes
 - Undo/redo functionality
 - Dark mode toggle
+- Better "Highlight Continued" handling (match Python implementation)
 
 **Both:**
 - Support for chapter/location metadata
@@ -496,10 +537,35 @@ Paste quotes → Parse quotes → AI/Manual source entry → Review → Add tags
 
 ## Version History
 
-- **Current**: Initial implementation with Python CLI and React web app
-- Two processing modes (Quick/Full)
+### Current (December 2025)
+- **Tag Suggestion Engine** (Python CLI only): Intelligent tag suggestions using noun phrase extraction
+- **Improved Quote Parsing**: Better handling of "Highlight Continued" across pages
+- **Interactive Tagging**: User-friendly workflow with suggested tags displayed
+- Two processing modes (Quick/Full) in React app
 - CSV and markdown export
 - AI-powered metadata extraction
+
+### Feature Parity Status
+
+**Python CLI Features:**
+- ✅ Quote parsing with "Highlight Continued" support
+- ✅ Tag suggestion engine with noun phrase extraction
+- ✅ Interactive per-quote tagging
+- ✅ Source-level tags
+- ✅ YAML frontmatter generation
+- ✅ Test mode with automatic tag assignment
+
+**React Web App Features:**
+- ✅ Quote parsing (basic)
+- ✅ AI citation parsing
+- ✅ AI summary generation
+- ✅ Source-level tag generation (AI)
+- ✅ Quick/Full processing modes
+- ✅ CSV export
+- ✅ Test data loader
+- ❌ Per-quote tagging (not yet implemented)
+- ❌ Tag suggestion engine (not yet ported from Python)
+- ❌ "Highlight Continued" preprocessing (simpler implementation)
 
 ## Contributing
 
@@ -532,6 +598,25 @@ When contributing to this project:
 
 ---
 
-**Last Updated**: 2025-12-07
+**Last Updated**: 2025-12-08
 **Project Maintainer**: User workspace
 **AI Assistant**: Claude (Anthropic)
+
+## Recent Changes (December 7-8, 2025)
+
+### Tag Suggestion Engine (Python CLI)
+- Added heuristic noun phrase extraction with stopword filtering
+- Implemented relevance scoring combining global frequency and local context
+- Created interactive tagging workflow with suggestions displayed
+- Modified test mode to automatically assign suggested tags
+- Added comprehensive tag normalization (lowercase, kebab-case)
+
+### Quote Parsing Improvements (Python CLI)
+- Enhanced "Highlight Continued" preprocessing to merge split quotes
+- Improved page number extraction and cleaning
+- Better handling of multi-page highlights
+
+### Note Structure Updates (Python CLI)
+- Quote notes now include `tags:` field in YAML frontmatter
+- Empty tag lists preserved with placeholder syntax
+- Consistent tag formatting across all note types
