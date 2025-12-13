@@ -4,8 +4,8 @@
 
 **Scribsidian** is a tool for converting Kindle highlights into Obsidian-compatible markdown notes with rich metadata and bi-directional linking. The project provides three implementations:
 
-1. **Python TUI** (`scribsidian.py` + `scribsidian_tui.py`) - Terminal User Interface with interactive screens (default)
-2. **Python Simple CLI** (`scribsidian.py --simple`) - Traditional command-line interface for batch processing
+1. **Python Simple CLI** (`scribsidian.py`) - Traditional command-line interface for batch processing (default)
+2. **Python TUI** (`scribsidian.py --ui` + `scribsidian_tui.py`) - Terminal User Interface with interactive screens
 3. **React Web App** (`kindle-to-obsidian.tsx`) - Interactive web interface with AI-powered features
 
 ### Purpose
@@ -121,17 +121,17 @@ A short bio can go here.
 ### Usage
 
 ```bash
-# TUI mode (default) - Interactive terminal UI
+# Simple CLI mode (default) - Traditional command-line interface
 python scribsidian.py
 
-# TUI with test data
+# Simple CLI with test data
 python scribsidian.py --test
 
-# Simple CLI mode (original interface)
-python scribsidian.py --simple
+# TUI mode - Interactive terminal UI
+python scribsidian.py --ui
 
-# Simple CLI with test data
-python scribsidian.py --simple --test
+# TUI with test data
+python scribsidian.py --ui --test
 ```
 
 ### Tag Suggestion Engine
@@ -188,7 +188,7 @@ The TUI requires the `textual` library:
 pip install -r requirements.txt
 ```
 
-If textual is not installed, the tool falls back gracefully with a helpful error message suggesting either installation or using `--simple` mode.
+If textual is not installed when using `--ui`, the tool shows a helpful error message suggesting either installation or running without the `--ui` flag for simple CLI mode.
 
 ### Architecture
 
@@ -845,8 +845,8 @@ When contributing to this project:
 - **6-Screen Wizard**: Welcome → Quote Input → Metadata → Tag Quotes → Review → Complete
 - **Interactive Tagging**: Checkbox-based tag selection with keyboard navigation (n/p keys)
 - **Visual Feedback**: Real-time quote counts, progress indicators, validation messages
-- **Dual Mode Support**: Added `--simple` flag to preserve original CLI while making TUI default
-- **Graceful Fallback**: Clear error message if textual not installed, suggesting simple mode
+- **Dual Mode Support**: Added `--ui` flag for TUI mode, with simple CLI as default
+- **Graceful Fallback**: Clear error message if textual not installed when using `--ui`
 - **Test Mode**: `--test` flag now works in both TUI and simple modes
 - **New Files**: `scribsidian_tui.py` (TUI implementation), `requirements.txt` (dependencies)
 - **Code Reuse**: TUI imports and reuses all core functions from scribsidian.py
