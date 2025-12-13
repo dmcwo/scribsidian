@@ -139,7 +139,7 @@ class QuoteInputScreen(Screen):
     }
 
     #footer-box {
-        height: 7;
+        height: 10;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -272,7 +272,7 @@ class MetadataScreen(Screen):
     }
 
     #footer-box {
-        height: 7;
+        height: 10;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -421,11 +421,10 @@ class TagQuotesScreen(Screen):
     }
 
     #quote-display {
-        height: 12;
+        height: 10;
         border: solid $accent;
         padding: 1 2;
         margin-bottom: 1;
-        overflow-y: auto;
     }
 
     .quote-text {
@@ -441,7 +440,6 @@ class TagQuotesScreen(Screen):
         height: 1fr;
         border: solid $primary;
         padding: 1 2;
-        overflow-y: auto;
     }
 
     .section-title {
@@ -465,7 +463,7 @@ class TagQuotesScreen(Screen):
     }
 
     #footer-box {
-        height: 8;
+        height: 10;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -693,7 +691,7 @@ class ReviewScreen(Screen):
     }
 
     #footer-box {
-        height: 5;
+        height: 10;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -701,6 +699,8 @@ class ReviewScreen(Screen):
 
     #button-row {
         align: center middle;
+        height: auto;
+        width: 100%;
         margin-top: 1;
     }
 
@@ -882,6 +882,11 @@ class ScribsidianApp(App):
     def __init__(self, test_mode: bool = False):
         super().__init__()
         self.test_mode = test_mode
+
+    def compose(self) -> ComposeResult:
+        """Compose the app layout with header and footer."""
+        yield Header()
+        yield Footer()
 
     def on_mount(self) -> None:
         """Show welcome screen on startup, or skip to test data if test_mode."""
