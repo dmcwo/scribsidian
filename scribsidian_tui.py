@@ -27,6 +27,24 @@ from scribsidian import (
     TEST_METADATA
 )
 
+import re
+
+
+def sanitize_id(text: str) -> str:
+    """Sanitize text to create valid HTML/CSS IDs.
+
+    IDs must contain only letters, numbers, underscores, or hyphens,
+    and must not begin with a number.
+    """
+    # Replace invalid characters with underscores
+    sanitized = re.sub(r"[^a-zA-Z0-9_-]", "_", text)
+
+    # Ensure it doesn't start with a number
+    if sanitized and sanitized[0].isdigit():
+        sanitized = f"tag_{sanitized}"
+
+    return sanitized
+
 
 # --------------------------
 # Screen 1: Welcome
@@ -421,10 +439,11 @@ class TagQuotesScreen(Screen):
     }
 
     #quote-display {
-        height: 10;
+        height: 6;
         border: solid $accent;
         padding: 1 2;
         margin-bottom: 1;
+        overflow-y: auto;
     }
 
     .quote-text {
@@ -448,8 +467,16 @@ class TagQuotesScreen(Screen):
         margin-bottom: 1;
     }
 
+    #checkboxes-container {
+        height: auto;
+        max-height: 15;
+        overflow-y: auto;
+        margin-bottom: 1;
+    }
+
     Checkbox {
-        margin: 0 2;
+        margin: 0 1;
+        padding: 0 1;
     }
 
     #custom-tag-box {
@@ -463,7 +490,7 @@ class TagQuotesScreen(Screen):
     }
 
     #footer-box {
-        height: 10;
+        height: 8;
         border: solid $primary;
         padding: 1 2;
         background: $surface;
@@ -499,14 +526,16 @@ class TagQuotesScreen(Screen):
         )
 
         yield Container(
-            Container(
+            ScrollableContainer(
                 Static("", id="quote-text", classes="quote-text"),
                 Static("", id="quote-meta", classes="quote-meta"),
                 id="quote-display"
             ),
-            ScrollableContainer(
+            Container(
                 Static("✨ Suggested Tags (select relevant ones):", classes="section-title"),
-                Container(id="checkboxes-container"),
+                ScrollableContainer(
+                    id="checkboxes-container"
+                ),
                 Container(
                     Static("➕ Custom Tags:", classes="section-title"),
                     Input(placeholder="Add custom tags (comma-separated)", id="custom-tags-input"),
@@ -551,7 +580,7 @@ class TagQuotesScreen(Screen):
         quote_meta.update(f"— Page {quote['page']}")
 
         # Clear existing checkboxes
-        checkbox_container = self.query_one("#checkboxes-container", Container)
+        checkbox_container = self.query_one("#checkboxes-container", ScrollableContainer)
         checkbox_container.remove_children()
 
         # Create checkboxes for suggested tags
@@ -559,7 +588,9 @@ class TagQuotesScreen(Screen):
         existing_tags = quote.get("tags", [])
 
         for tag in suggested_tags:
-            checkbox = Checkbox(tag, value=(tag in existing_tags), id=f"tag-{tag}")
+            # Sanitize tag for use in ID (avoid special characters like apostrophes)
+            safe_id = sanitize_id(f"tag-{tag}")
+            checkbox = Checkbox(tag, value=(tag in existing_tags), id=safe_id)
             checkbox_container.mount(checkbox)
 
         # Clear custom tags input (or show existing custom tags not in suggestions)
@@ -875,9 +906,14 @@ class ScribsidianApp(App):
     Screen {
         background: $background;
     }
+
+    Header {
+        background: $primary;
+    }
     """
 
     TITLE = "Scribsidian - Kindle to Obsidian"
+    SUB_TITLE = "Transform Kindle highlights into Obsidian notes"
 
     def __init__(self, test_mode: bool = False):
         super().__init__()
