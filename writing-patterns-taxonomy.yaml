@@ -1,0 +1,1376 @@
+# ============================================================================
+# COMPREHENSIVE WRITING PATTERNS TAXONOMY
+# Machine-Readable Inventory for AI-Powered Writing Analysis
+# ============================================================================
+
+metadata:
+  version: "1.0"
+  total_patterns: 600+
+  scope_levels: ["word", "phrase", "clause", "sentence", "paragraph", "section", "document"]
+
+# ============================================================================
+# 1. SENTENCE-LEVEL SYNTACTIC STRUCTURES
+# ============================================================================
+
+syntactic_structures:
+
+  clause_types:
+    - id: "SYN-CL-001"
+      name: "Independent/Main Clause"
+      description: "Complete syntactic unit with subject + finite verb"
+      markers: ["SVO word order", "tensed verb", "period termination"]
+      scope: "clause"
+      genre_contexts: ["all"]
+      
+    - id: "SYN-CL-002"
+      name: "Nominal/Noun Clause"
+      description: "Clause functioning as noun (subject, object, complement)"
+      markers: ["that", "what", "whether", "if", "wh-words"]
+      scope: "clause"
+      genre_contexts: ["academic", "formal", "reported_speech"]
+      
+    - id: "SYN-CL-003"
+      name: "Restrictive Relative Clause"
+      description: "Essential identifying information; no commas"
+      markers: ["who", "whom", "which", "that", "whose"]
+      scope: "clause"
+      
+    - id: "SYN-CL-004"
+      name: "Non-restrictive Relative Clause"
+      description: "Non-essential information; comma-separated"
+      markers: ["which", "who", "comma separation"]
+      scope: "clause"
+      
+    - id: "SYN-CL-005"
+      name: "Reduced Relative Clause"
+      description: "Participial form with omitted relative pronoun"
+      markers: ["-ing participle", "-ed/-en participle"]
+      scope: "phrase-clause"
+      
+    - id: "SYN-CL-006"
+      name: "Temporal Adverbial Clause"
+      markers: ["when", "while", "before", "after", "until", "since", "as", "once"]
+      scope: "clause"
+      
+    - id: "SYN-CL-007"
+      name: "Causal Adverbial Clause"
+      markers: ["because", "since", "as", "given that", "inasmuch as"]
+      scope: "clause"
+      
+    - id: "SYN-CL-008"
+      name: "Conditional Adverbial Clause"
+      markers: ["if", "unless", "provided that", "in case", "assuming that"]
+      scope: "clause"
+      
+    - id: "SYN-CL-009"
+      name: "Concessive Adverbial Clause"
+      markers: ["although", "though", "even though", "while", "whereas"]
+      scope: "clause"
+      
+    - id: "SYN-CL-010"
+      name: "Purpose Adverbial Clause"
+      markers: ["so that", "in order that", "lest", "for fear that"]
+      scope: "clause"
+      
+    - id: "SYN-CL-011"
+      name: "Result Adverbial Clause"
+      markers: ["so...that", "such...that"]
+      scope: "clause"
+      
+    - id: "SYN-CL-012"
+      name: "Infinitival Clause"
+      markers: ["to + base verb", "for NP to VP"]
+      scope: "clause"
+      
+    - id: "SYN-CL-013"
+      name: "Participial Clause"
+      markers: ["-ing form", "-ed/-en form"]
+      scope: "clause"
+
+  special_constructions:
+    - id: "SYN-CON-001"
+      name: "It-Cleft"
+      description: "Focus construction: It + BE + FOCUS + relative clause"
+      markers: ["It was X who/that"]
+      scope: "sentence"
+      function: "Exhaustive/contrastive focus"
+      
+    - id: "SYN-CON-002"
+      name: "Wh-Cleft (Pseudo-cleft)"
+      description: "What-clause + BE + FOCUS"
+      markers: ["What X did was", "The thing that"]
+      scope: "sentence"
+      
+    - id: "SYN-CON-003"
+      name: "There-Existential"
+      description: "Introduces existence/presence of entity"
+      markers: ["There + BE + NP"]
+      scope: "clause"
+      function: "Presentational; introduce new referents"
+      
+    - id: "SYN-CON-004"
+      name: "Subject Extraposition"
+      description: "Clausal subject moved to end, 'it' placeholder"
+      markers: ["It + V + that-clause", "It is ADJ to V"]
+      scope: "sentence"
+      
+    - id: "SYN-CON-005"
+      name: "Left-Dislocation"
+      description: "Fronted NP with resumptive pronoun"
+      markers: ["NP, pronoun + V"]
+      scope: "sentence"
+      genre_contexts: ["spoken", "informal"]
+      
+    - id: "SYN-CON-006"
+      name: "Topicalization"
+      description: "Fronting constituent for contrast/emphasis"
+      markers: ["Object/Adjunct initial, gap in canonical position"]
+      scope: "sentence"
+      
+    - id: "SYN-CON-007"
+      name: "Subject-Auxiliary Inversion"
+      markers: ["Aux + S + V"]
+      triggers: ["interrogatives", "negative fronting", "conditional without if"]
+      scope: "clause"
+      
+    - id: "SYN-CON-008"
+      name: "Locative Inversion"
+      description: "PP(locative) + V + S"
+      markers: ["In the corner sat...", "Down came..."]
+      scope: "sentence"
+      genre_contexts: ["narrative", "literary"]
+      
+    - id: "SYN-CON-009"
+      name: "Negative Inversion"
+      markers: ["Never have I", "Rarely does", "Not only...but", "Under no circumstances"]
+      scope: "sentence"
+
+  ellipsis_types:
+    - id: "SYN-EL-001"
+      name: "Verb Phrase Ellipsis"
+      markers: ["auxiliary retained", "too/also/so/either"]
+      scope: "clause"
+      
+    - id: "SYN-EL-002"
+      name: "Gapping"
+      description: "Verb omitted in non-initial conjunct"
+      scope: "sentence"
+      
+    - id: "SYN-EL-003"
+      name: "Sluicing"
+      description: "Clause following wh-phrase elided"
+      scope: "sentence"
+      
+    - id: "SYN-EL-004"
+      name: "Nominal Ellipsis"
+      markers: ["one/ones placeholder"]
+      scope: "phrase"
+
+  sentence_types:
+    - id: "SYN-ST-001"
+      name: "Declarative"
+      markers: ["SVO order", "period", "falling intonation"]
+      function: "Statement/assertion"
+      
+    - id: "SYN-ST-002"
+      name: "Yes-No Interrogative"
+      markers: ["Aux + S + V", "question mark", "rising intonation"]
+      
+    - id: "SYN-ST-003"
+      name: "Wh-Interrogative"
+      markers: ["Wh-word initial", "question mark"]
+      
+    - id: "SYN-ST-004"
+      name: "Tag Question"
+      markers: ["Declarative + reversed polarity tag"]
+      
+    - id: "SYN-ST-005"
+      name: "Imperative"
+      markers: ["no overt subject", "base verb form"]
+      
+    - id: "SYN-ST-006"
+      name: "Exclamatory"
+      markers: ["What/How initial", "exclamation mark"]
+
+  grammatical_transformations:
+    - id: "SYN-TR-001"
+      name: "Passive Voice"
+      markers: ["BE + past participle", "by-phrase (optional)"]
+      function: "Agent backgrounding; topic shift"
+      
+    - id: "SYN-TR-002"
+      name: "Indirect Speech"
+      markers: ["reporting verb + that-clause", "tense backshift", "deictic shifts"]
+      
+    - id: "SYN-TR-003"
+      name: "Nominalization"
+      markers: ["-tion/-sion", "-ment", "-ance/-ence", "-ity", "-ness", "-al"]
+      function: "Information compression; abstraction"
+
+# ============================================================================
+# 2. RHETORICAL MOVES AND STRATEGIES
+# ============================================================================
+
+rhetorical_strategies:
+
+  classical_appeals:
+    - id: "RHE-AP-001"
+      name: "Ethos (Credibility)"
+      description: "Appeals to character, expertise, trustworthiness"
+      markers: ["credentials citation", "I have studied", "As a researcher", "references to shared values"]
+      scope: "sentence-document"
+      subtypes: ["personal_ethos", "expert_ethos", "institutional_ethos"]
+      
+    - id: "RHE-AP-002"
+      name: "Pathos (Emotion)"
+      description: "Appeals to emotions, values, sympathies"
+      markers: ["emotionally charged vocabulary", "vivid imagery", "personal stories", "direct address"]
+      scope: "word-paragraph"
+      subtypes: ["fear", "compassion", "pride", "hope", "anger", "nostalgia"]
+      
+    - id: "RHE-AP-003"
+      name: "Logos (Logic)"
+      description: "Appeals to reason through evidence and logic"
+      markers: ["therefore", "thus", "because", "research shows", "statistics", "if...then"]
+      scope: "clause-section"
+      reasoning_types: ["inductive", "deductive", "causal", "analogical"]
+      
+    - id: "RHE-AP-004"
+      name: "Kairos (Timing)"
+      description: "Appeals leveraging opportune moment"
+      markers: ["In light of recent", "Now is the time", "At this critical juncture"]
+      scope: "document"
+
+  rhetorical_devices:
+    figures_of_comparison:
+      - id: "RHE-DEV-001"
+        name: "Metaphor"
+        markers: ["X is Y", "absence of like/as"]
+        scope: "word-phrase"
+        
+      - id: "RHE-DEV-002"
+        name: "Simile"
+        markers: ["like", "as", "resembles"]
+        scope: "phrase"
+        
+      - id: "RHE-DEV-003"
+        name: "Metonymy"
+        description: "Associated term for referent"
+        examples: ["The crown (monarchy)", "The White House (administration)"]
+        
+      - id: "RHE-DEV-004"
+        name: "Synecdoche"
+        description: "Part for whole or whole for part"
+        examples: ["All hands on deck", "Nice wheels"]
+        
+      - id: "RHE-DEV-005"
+        name: "Personification"
+        markers: ["human verbs/adjectives for objects"]
+
+    figures_of_sound:
+      - id: "RHE-DEV-006"
+        name: "Alliteration"
+        description: "Repeated initial consonants"
+        
+      - id: "RHE-DEV-007"
+        name: "Assonance"
+        description: "Repeated vowel sounds"
+        
+      - id: "RHE-DEV-008"
+        name: "Consonance"
+        description: "Repeated consonant sounds (non-initial)"
+        
+      - id: "RHE-DEV-009"
+        name: "Onomatopoeia"
+        description: "Sound-imitating words"
+
+    figures_of_repetition:
+      - id: "RHE-DEV-010"
+        name: "Anaphora"
+        description: "Same words at beginning of successive clauses"
+        scope: "clause-paragraph"
+        
+      - id: "RHE-DEV-011"
+        name: "Epistrophe"
+        description: "Same words at end of successive clauses"
+        
+      - id: "RHE-DEV-012"
+        name: "Anadiplosis"
+        description: "End of clause begins next clause"
+        
+      - id: "RHE-DEV-013"
+        name: "Chiasmus"
+        description: "Reversed parallel structure (ABBA)"
+        
+      - id: "RHE-DEV-014"
+        name: "Parallelism"
+        description: "Matched syntactic patterns"
+        
+      - id: "RHE-DEV-015"
+        name: "Polysyndeton"
+        description: "Deliberate many conjunctions"
+        
+      - id: "RHE-DEV-016"
+        name: "Asyndeton"
+        description: "Deliberate omission of conjunctions"
+
+    figures_of_thought:
+      - id: "RHE-DEV-017"
+        name: "Rhetorical Question"
+        description: "Question with implied obvious answer"
+        
+      - id: "RHE-DEV-018"
+        name: "Hyperbole"
+        description: "Deliberate exaggeration"
+        
+      - id: "RHE-DEV-019"
+        name: "Litotes"
+        description: "Understatement through negation"
+        markers: ["not un-", "not bad"]
+        
+      - id: "RHE-DEV-020"
+        name: "Oxymoron"
+        description: "Contradictory terms together"
+        
+      - id: "RHE-DEV-021"
+        name: "Paradox"
+        description: "Seemingly contradictory true statement"
+        
+      - id: "RHE-DEV-022"
+        name: "Irony"
+        types: ["verbal", "situational", "dramatic"]
+
+  argumentative_strategies:
+    toulmin_model:
+      - id: "RHE-ARG-001"
+        name: "Claim"
+        markers: ["thesis statements", "I argue that", "This paper contends"]
+        
+      - id: "RHE-ARG-002"
+        name: "Grounds/Data"
+        markers: ["statistics", "facts", "examples", "citations"]
+        
+      - id: "RHE-ARG-003"
+        name: "Warrant"
+        description: "Assumption linking grounds to claim"
+        
+      - id: "RHE-ARG-004"
+        name: "Qualifier"
+        markers: ["presumably", "probably", "in most cases", "generally"]
+        
+      - id: "RHE-ARG-005"
+        name: "Rebuttal"
+        markers: ["However", "Although", "Some might argue", "Critics contend"]
+        
+      - id: "RHE-ARG-006"
+        name: "Concession"
+        markers: ["While it is true", "Admittedly", "Granted", "To some extent"]
+        
+      - id: "RHE-ARG-007"
+        name: "Refutation"
+        markers: ["On the contrary", "This overlooks", "This fails because"]
+
+    stasis_theory:
+      - id: "RHE-ST-001"
+        name: "Conjecture (Fact)"
+        question: "Did it happen? What are the facts?"
+        
+      - id: "RHE-ST-002"
+        name: "Definition"
+        question: "What is it? How should we classify it?"
+        
+      - id: "RHE-ST-003"
+        name: "Quality"
+        question: "Is it good/bad? How serious?"
+        
+      - id: "RHE-ST-004"
+        name: "Policy"
+        question: "What should be done?"
+
+  academic_moves_CARS:
+    - id: "RHE-CARS-001"
+      name: "Move 1: Establishing Territory"
+      markers: ["Recently there has been growing interest", "X has become important", "Research has grown"]
+      steps: ["Claiming centrality", "Making generalizations", "Reviewing literature"]
+      
+    - id: "RHE-CARS-002"
+      name: "Move 2: Establishing Niche"
+      markers: ["However these studies fail to", "Little attention paid to", "No studies have examined", "It remains unclear"]
+      steps: ["Counter-claiming", "Indicating gap", "Question-raising"]
+      
+    - id: "RHE-CARS-003"
+      name: "Move 3: Occupying Niche"
+      markers: ["This study aims to", "The purpose is", "This paper examines", "Results indicate"]
+      steps: ["Outlining purposes", "Announcing research", "Announcing findings", "Indicating structure"]
+
+# ============================================================================
+# 3. WRITING STYLE DIMENSIONS
+# ============================================================================
+
+style_dimensions:
+
+  formality_scale:
+    - id: "STY-FOR-001"
+      name: "Frozen/Static"
+      level: 5
+      description: "Fixed ceremonial language"
+      contexts: ["legal_oaths", "ceremonies", "pledges"]
+      
+    - id: "STY-FOR-002"
+      name: "Formal"
+      level: 4
+      markers: ["complete sentences", "third person", "passive voice", "Latinate vocabulary", "no contractions"]
+      
+    - id: "STY-FOR-003"
+      name: "Consultative"
+      level: 3
+      description: "Professional but accessible"
+      
+    - id: "STY-FOR-004"
+      name: "Casual"
+      level: 2
+      markers: ["contractions", "first/second person", "colloquialisms"]
+      
+    - id: "STY-FOR-005"
+      name: "Intimate"
+      level: 1
+      description: "Private, personal language"
+
+  complexity_measures:
+    lexical:
+      - id: "STY-LEX-001"
+        name: "Lexical Density"
+        description: "Ratio of content words to total words"
+        formula: "content_words / total_words"
+        ranges: {"academic": "50-60%", "spoken": "35-40%"}
+        
+      - id: "STY-LEX-002"
+        name: "Lexical Sophistication"
+        description: "Use of low-frequency, academic vocabulary"
+        indicators: ["AWL coverage", "word frequency bands"]
+        
+      - id: "STY-LEX-003"
+        name: "Lexical Diversity"
+        description: "Vocabulary variety"
+        measure: "type-token ratio"
+
+    syntactic:
+      - id: "STY-SYN-001"
+        name: "Mean Sentence Length"
+        
+      - id: "STY-SYN-002"
+        name: "Clause Density"
+        description: "Clauses per T-unit"
+        
+      - id: "STY-SYN-003"
+        name: "Subordination Index"
+        
+      - id: "STY-SYN-004"
+        name: "Noun Phrase Complexity"
+
+  stance_markers_Hyland:
+    - id: "STY-STA-001"
+      name: "Hedges"
+      description: "Express tentativeness"
+      markers:
+        modal_verbs: ["may", "might", "could", "would"]
+        epistemic_verbs: ["suggest", "indicate", "appear", "seem"]
+        adverbs: ["perhaps", "possibly", "probably", "arguably"]
+        adjectives: ["possible", "likely", "probable"]
+        approximators: ["approximately", "about", "roughly"]
+      frequency: "10-20 per 1000 words in academic"
+      
+    - id: "STY-STA-002"
+      name: "Boosters"
+      description: "Express certainty"
+      markers:
+        adverbs: ["certainly", "definitely", "clearly", "obviously"]
+        verbs: ["demonstrate", "prove", "establish", "confirm"]
+        expressions: ["In fact", "Without doubt", "It is clear"]
+        
+    - id: "STY-STA-003"
+      name: "Attitude Markers"
+      markers:
+        verbs: ["agree", "prefer", "hope"]
+        adjectives: ["appropriate", "interesting", "significant", "surprising"]
+        adverbs: ["fortunately", "importantly", "surprisingly"]
+        
+    - id: "STY-STA-004"
+      name: "Self-Mentions"
+      markers: ["I", "we", "my", "our", "the author(s)"]
+      
+    - id: "STY-STA-005"
+      name: "Reader Engagement"
+      markers:
+        pronouns: ["you", "your", "one"]
+        questions: ["rhetorical questions"]
+        directives: ["Consider", "Note", "See"]
+        shared_knowledge: ["As we know", "Of course"]
+
+  appraisal_theory_Martin_White:
+    attitude:
+      - id: "STY-APP-001"
+        name: "Affect"
+        description: "Emotional responses"
+        categories: ["un/happiness", "in/security", "dis/satisfaction"]
+        
+      - id: "STY-APP-002"
+        name: "Judgement"
+        description: "Evaluation of human behavior"
+        social_esteem: ["normality", "capacity", "tenacity"]
+        social_sanction: ["veracity", "propriety"]
+        
+      - id: "STY-APP-003"
+        name: "Appreciation"
+        description: "Aesthetic evaluation"
+        categories: ["reaction", "composition", "valuation"]
+
+    engagement:
+      - id: "STY-APP-004"
+        name: "Monogloss"
+        description: "Bare assertions, no alternatives"
+        
+      - id: "STY-APP-005"
+        name: "Heterogloss - Expand"
+        markers:
+          entertain: ["perhaps", "may", "possibly"]
+          attribute: ["X claims that", "reportedly"]
+          
+      - id: "STY-APP-006"
+        name: "Heterogloss - Contract"
+        markers:
+          deny: ["not", "never"]
+          counter: ["but", "however", "although"]
+          concur: ["of course", "obviously"]
+          pronounce: ["I contend", "the fact is"]
+          endorse: ["X demonstrates", "proves"]
+
+    graduation:
+      - id: "STY-APP-007"
+        name: "Force (Intensity)"
+        markers: ["slightly", "somewhat", "very", "extremely", "completely"]
+        
+      - id: "STY-APP-008"
+        name: "Focus (Category)"
+        sharpen: ["a true friend", "pure", "literally"]
+        soften: ["kind of", "sort of", "effectively"]
+
+  register_Halliday:
+    - id: "STY-REG-001"
+      name: "Field"
+      description: "Subject matter; what is being discussed"
+      markers: ["technical vocabulary", "domain-specific terms"]
+      
+    - id: "STY-REG-002"
+      name: "Tenor"
+      description: "Interpersonal relationships"
+      variables: ["status/power", "contact/familiarity", "affect"]
+      
+    - id: "STY-REG-003"
+      name: "Mode"
+      description: "Channel (spoken/written continuum)"
+      spoken_features: ["lower lexical density", "exophoric reference"]
+      written_features: ["higher lexical density", "complex NPs", "explicit reference"]
+
+  narrative_voice:
+    - id: "STY-NAR-001"
+      name: "First Person"
+      markers: ["I", "me", "my"]
+      
+    - id: "STY-NAR-002"
+      name: "Third Person Limited"
+      description: "One character's perspective"
+      
+    - id: "STY-NAR-003"
+      name: "Third Person Omniscient"
+      description: "All-knowing narrator"
+      
+    - id: "STY-NAR-004"
+      name: "Free Indirect Discourse"
+      description: "Blended narrator/character voice"
+      markers: ["third person + character perspective", "no reporting clause"]
+
+# ============================================================================
+# 4. SEMANTIC AND PRAGMATIC PATTERNS
+# ============================================================================
+
+pragmatic_patterns:
+
+  speech_acts_Searle:
+    - id: "PRA-SA-001"
+      name: "Representatives/Assertives"
+      description: "Commit speaker to truth of proposition"
+      subtypes: ["stating", "claiming", "reporting", "asserting", "concluding", "hypothesizing"]
+      markers: ["declarative mood", "evidential markers"]
+      
+    - id: "PRA-SA-002"
+      name: "Directives"
+      description: "Attempt to get hearer to do something"
+      subtypes: ["requesting", "commanding", "advising", "warning", "inviting", "forbidding"]
+      markers: ["imperative mood", "Please", "Could you", "You should"]
+      
+    - id: "PRA-SA-003"
+      name: "Commissives"
+      description: "Commit speaker to future action"
+      subtypes: ["promising", "vowing", "threatening", "offering", "guaranteeing"]
+      markers: ["I promise", "I will", "I guarantee"]
+      
+    - id: "PRA-SA-004"
+      name: "Expressives"
+      description: "Express psychological state"
+      subtypes: ["thanking", "apologizing", "congratulating", "welcoming", "praising", "blaming"]
+      markers: ["Thank you", "I'm sorry", "Congratulations"]
+      
+    - id: "PRA-SA-005"
+      name: "Declaratives"
+      description: "Change reality through utterance"
+      subtypes: ["declaring", "pronouncing", "appointing", "sentencing", "resigning"]
+      markers: ["I hereby", "I pronounce", "I declare"]
+      requires: "institutional authority"
+      
+    - id: "PRA-SA-006"
+      name: "Indirect Speech Acts"
+      description: "Illocutionary force differs from literal meaning"
+      markers: ["Can you...?", "Would you mind...?", "I'd like..."]
+
+  coherence_relations_RST:
+    informational:
+      - id: "PRA-RST-001"
+        name: "Elaboration"
+        markers: ["specifically", "in particular", "namely"]
+        
+      - id: "PRA-RST-002"
+        name: "Cause"
+        markers: ["because", "since", "as"]
+        
+      - id: "PRA-RST-003"
+        name: "Result"
+        markers: ["so", "therefore", "consequently"]
+        
+      - id: "PRA-RST-004"
+        name: "Purpose"
+        markers: ["in order to", "so that"]
+        
+      - id: "PRA-RST-005"
+        name: "Condition"
+        markers: ["if", "unless", "when"]
+        
+      - id: "PRA-RST-006"
+        name: "Contrast"
+        markers: ["but", "however", "while"]
+        
+      - id: "PRA-RST-007"
+        name: "Sequence"
+        markers: ["then", "next", "after"]
+        
+      - id: "PRA-RST-008"
+        name: "Means"
+        markers: ["by", "through", "via"]
+
+    presentational:
+      - id: "PRA-RST-009"
+        name: "Evidence"
+        markers: ["for example", "evidence shows"]
+        
+      - id: "PRA-RST-010"
+        name: "Justify"
+        markers: ["let me explain", "I say this because"]
+        
+      - id: "PRA-RST-011"
+        name: "Concession"
+        markers: ["although", "despite", "even though"]
+        
+      - id: "PRA-RST-012"
+        name: "Restatement"
+        markers: ["in other words", "that is"]
+        
+      - id: "PRA-RST-013"
+        name: "Summary"
+        markers: ["in summary", "to conclude"]
+
+  information_structure:
+    - id: "PRA-IS-001"
+      name: "Theme"
+      description: "Clause-initial point of departure"
+      types: ["simple", "multiple", "marked", "textual", "interpersonal"]
+      
+    - id: "PRA-IS-002"
+      name: "Rheme"
+      description: "New information about theme"
+      
+    - id: "PRA-IS-003"
+      name: "Given Information"
+      markers: ["definite articles", "pronouns", "reduced stress"]
+      
+    - id: "PRA-IS-004"
+      name: "New Information"
+      markers: ["indefinite articles", "full NPs", "nuclear stress"]
+
+    thematic_progression:
+      - id: "PRA-IS-005"
+        name: "Simple Linear"
+        pattern: "Rheme becomes next Theme"
+        
+      - id: "PRA-IS-006"
+        name: "Constant Theme"
+        pattern: "Same theme repeated"
+        
+      - id: "PRA-IS-007"
+        name: "Derived Theme"
+        pattern: "Themes derived from hypertheme"
+
+  implicature:
+    - id: "PRA-IMP-001"
+      name: "Conventional Implicature"
+      triggers: ["but", "even", "therefore", "yet"]
+      
+    - id: "PRA-IMP-002"
+      name: "Conversational Implicature"
+      types: ["generalized", "particularized", "scalar"]
+      
+    - id: "PRA-IMP-003"
+      name: "Gricean Maxims"
+      maxims: ["Quality (truth)", "Quantity (informativeness)", "Relation (relevance)", "Manner (clarity)"]
+
+  presupposition_triggers:
+    - id: "PRA-PRE-001"
+      name: "Definite Descriptions"
+      markers: ["the X"]
+      presupposes: "existence/uniqueness"
+      
+    - id: "PRA-PRE-002"
+      name: "Factive Verbs"
+      markers: ["know", "realize", "regret"]
+      presupposes: "complement is true"
+      
+    - id: "PRA-PRE-003"
+      name: "Aspectual Verbs"
+      markers: ["stop", "start", "continue"]
+      presupposes: "previous state"
+      
+    - id: "PRA-PRE-004"
+      name: "Iteratives"
+      markers: ["again", "return", "another"]
+      presupposes: "prior occurrence"
+      
+    - id: "PRA-PRE-005"
+      name: "Cleft Sentences"
+      markers: ["It was X who"]
+      presupposes: "someone did action"
+
+  politeness_Brown_Levinson:
+    face_types:
+      - positive_face: "desire to be appreciated"
+      - negative_face: "desire for autonomy"
+      
+    strategies:
+      - id: "PRA-POL-001"
+        name: "Bald On-Record"
+        description: "Direct, no mitigation"
+        context: "urgency, intimacy"
+        
+      - id: "PRA-POL-002"
+        name: "Positive Politeness"
+        description: "Appeal to solidarity"
+        markers: ["We should", "in-group markers", "compliments"]
+        
+      - id: "PRA-POL-003"
+        name: "Negative Politeness"
+        description: "Minimize imposition"
+        markers: ["Could you possibly", "I don't suppose", "I wonder if"]
+        
+      - id: "PRA-POL-004"
+        name: "Off-Record"
+        description: "Indirect hints"
+        markers: ["It's cold in here (request to close window)"]
+
+# ============================================================================
+# 5. COHESION AND COHERENCE DEVICES
+# ============================================================================
+
+cohesion_devices:
+
+  reference_Halliday_Hasan:
+    - id: "COH-REF-001"
+      name: "Anaphora"
+      description: "Reference back to antecedent"
+      markers: ["he", "she", "it", "they", "this", "that"]
+      scope: "cross-sentence"
+      
+    - id: "COH-REF-002"
+      name: "Cataphora"
+      description: "Reference forward to postcedent"
+      markers: ["This is what I mean:"]
+      
+    - id: "COH-REF-003"
+      name: "Exophora"
+      description: "Reference outside text"
+      
+    - id: "COH-REF-004"
+      name: "Demonstrative Reference"
+      markers: ["this", "that", "these", "those", "here", "there"]
+      
+    - id: "COH-REF-005"
+      name: "Comparative Reference"
+      markers: ["same", "similar", "different", "other", "more", "less"]
+
+  substitution:
+    - id: "COH-SUB-001"
+      name: "Nominal Substitution"
+      markers: ["one", "ones", "same"]
+      
+    - id: "COH-SUB-002"
+      name: "Verbal Substitution"
+      markers: ["do", "do so", "do it"]
+      
+    - id: "COH-SUB-003"
+      name: "Clausal Substitution"
+      markers: ["so", "not"]
+
+  conjunction_types:
+    - id: "COH-CON-001"
+      name: "Additive"
+      markers: ["and", "also", "furthermore", "moreover", "in addition", "besides"]
+      
+    - id: "COH-CON-002"
+      name: "Adversative"
+      markers: ["but", "however", "yet", "nevertheless", "on the other hand", "in contrast"]
+      
+    - id: "COH-CON-003"
+      name: "Causal"
+      markers: ["so", "therefore", "thus", "hence", "consequently", "because"]
+      
+    - id: "COH-CON-004"
+      name: "Temporal"
+      markers: ["then", "next", "afterward", "finally", "meanwhile", "previously"]
+
+  lexical_cohesion:
+    - id: "COH-LEX-001"
+      name: "Repetition"
+      description: "Same word repeated"
+      
+    - id: "COH-LEX-002"
+      name: "Synonymy"
+      description: "Different word, same meaning"
+      
+    - id: "COH-LEX-003"
+      name: "Superordinate"
+      description: "General term for specific"
+      
+    - id: "COH-LEX-004"
+      name: "Collocation"
+      description: "Words typically occurring together"
+      
+    - id: "COH-LEX-005"
+      name: "Antonymy"
+      description: "Opposite meanings"
+
+  discourse_markers:
+    - id: "COH-DM-001"
+      name: "Topic Introduction"
+      markers: ["as for", "regarding", "concerning", "with respect to"]
+      
+    - id: "COH-DM-002"
+      name: "Topic Shift"
+      markers: ["now", "anyway", "by the way", "incidentally"]
+      
+    - id: "COH-DM-003"
+      name: "Topic Return"
+      markers: ["as I was saying", "to return to", "getting back to"]
+      
+    - id: "COH-DM-004"
+      name: "Reformulation"
+      markers: ["in other words", "that is", "i.e.", "namely"]
+      
+    - id: "COH-DM-005"
+      name: "Exemplification"
+      markers: ["for example", "for instance", "such as", "e.g."]
+
+# ============================================================================
+# 6. EVIDENCE AND SOURCING PATTERNS
+# ============================================================================
+
+evidence_patterns:
+
+  citation_styles:
+    - id: "EVI-CIT-001"
+      name: "Parenthetical (APA)"
+      pattern: "(Author, Year, p. X)"
+      
+    - id: "EVI-CIT-002"
+      name: "Parenthetical (MLA)"
+      pattern: "(Author Page)"
+      
+    - id: "EVI-CIT-003"
+      name: "Narrative Citation"
+      pattern: "Author (Year) argues that..."
+      
+    - id: "EVI-CIT-004"
+      name: "Footnote/Endnote"
+      pattern: "superscript number linked to note"
+      
+    - id: "EVI-CIT-005"
+      name: "Numbered (IEEE)"
+      pattern: "[1] or (1)"
+
+  quotation_integration:
+    - id: "EVI-QUO-001"
+      name: "Full-sentence Introduction"
+      pattern: "Signal phrase + colon + quote"
+      
+    - id: "EVI-QUO-002"
+      name: "Blended Quotation"
+      pattern: "Quote integrated into sentence syntax"
+      
+    - id: "EVI-QUO-003"
+      name: "Block Quotation"
+      pattern: "Indented, no quotation marks (40+ words)"
+      
+    - id: "EVI-QUO-004"
+      name: "Partial Quotation"
+      pattern: "Key phrases only in quotes"
+
+  reporting_verbs:
+    neutral: ["states", "writes", "notes", "observes", "reports", "explains", "describes"]
+    argumentative: ["argues", "claims", "contends", "asserts", "maintains", "proposes"]
+    agreement: ["confirms", "supports", "demonstrates", "proves", "establishes"]
+    disagreement: ["challenges", "disputes", "refutes", "rejects", "questions"]
+    tentative: ["suggests", "implies", "indicates", "hypothesizes", "speculates"]
+
+  evidence_types:
+    - id: "EVI-TYP-001"
+      name: "Statistical Evidence"
+      markers: ["percentages", "numbers", "studies show"]
+      
+    - id: "EVI-TYP-002"
+      name: "Expert Testimony"
+      markers: ["credentials cited", "according to Dr."]
+      
+    - id: "EVI-TYP-003"
+      name: "Anecdotal Evidence"
+      markers: ["first-person narrative", "specific details"]
+      
+    - id: "EVI-TYP-004"
+      name: "Case Study Evidence"
+      markers: ["In the case of", "detailed analysis"]
+      
+    - id: "EVI-TYP-005"
+      name: "Textual Evidence"
+      markers: ["quotations", "page references"]
+      
+    - id: "EVI-TYP-006"
+      name: "Empirical Evidence"
+      markers: ["research demonstrates", "methodology references"]
+
+# ============================================================================
+# 7. DOCUMENT-LEVEL ARCHITECTURE
+# ============================================================================
+
+document_architecture:
+
+  organization_patterns:
+    - id: "DOC-ORG-001"
+      name: "IMRAD"
+      structure: ["Introduction", "Methods", "Results", "Discussion"]
+      genre_contexts: ["scientific_articles", "empirical_research"]
+      
+    - id: "DOC-ORG-002"
+      name: "Inverted Pyramid"
+      description: "Most important info first, decreasing importance"
+      genre_contexts: ["journalism", "news", "web_content"]
+      
+    - id: "DOC-ORG-003"
+      name: "Problem-Solution"
+      markers: ["The problem is", "The solution involves"]
+      
+    - id: "DOC-ORG-004"
+      name: "Chronological"
+      markers: ["first", "then", "next", "finally"]
+      
+    - id: "DOC-ORG-005"
+      name: "Compare-Contrast"
+      markers: ["Similarly", "In contrast", "On the other hand"]
+      
+    - id: "DOC-ORG-006"
+      name: "Cause-Effect"
+      markers: ["Because", "Therefore", "As a result"]
+      
+    - id: "DOC-ORG-007"
+      name: "Categorical"
+      description: "Grouped by topic/theme"
+
+  opening_conventions:
+    hook_types:
+      - id: "DOC-HOOK-001"
+        name: "Question Hook"
+        
+      - id: "DOC-HOOK-002"
+        name: "Quote Hook"
+        
+      - id: "DOC-HOOK-003"
+        name: "Anecdote Hook"
+        
+      - id: "DOC-HOOK-004"
+        name: "Statistic Hook"
+        
+      - id: "DOC-HOOK-005"
+        name: "Bold Claim Hook"
+        
+      - id: "DOC-HOOK-006"
+        name: "Description Hook"
+
+    thesis_patterns:
+      - id: "DOC-THESIS-001"
+        name: "Argumentative Thesis"
+        pattern: "Claim + reasons preview"
+        
+      - id: "DOC-THESIS-002"
+        name: "Expository Thesis"
+        pattern: "Topic + key aspects"
+        
+      - id: "DOC-THESIS-003"
+        name: "Analytical Thesis"
+        pattern: "Subject + analytical framework"
+
+  closing_conventions:
+    - id: "DOC-CLOSE-001"
+      name: "Summary Conclusion"
+      markers: ["In summary", "To conclude", "In brief"]
+      
+    - id: "DOC-CLOSE-002"
+      name: "Call to Action"
+      markers: ["must", "should", "it is time to"]
+      
+    - id: "DOC-CLOSE-003"
+      name: "Future Implications"
+      markers: ["Going forward", "In the future", "This suggests"]
+      
+    - id: "DOC-CLOSE-004"
+      name: "Circular Conclusion"
+      description: "Returns to opening element"
+      
+    - id: "DOC-CLOSE-005"
+      name: "Synthesis Conclusion"
+      markers: ["Taken together", "Ultimately", "What emerges"]
+
+  paragraph_structures:
+    - id: "DOC-PARA-001"
+      name: "Deductive (Topic-first)"
+      pattern: "Topic sentence → evidence → analysis"
+      
+    - id: "DOC-PARA-002"
+      name: "Inductive (Topic-last)"
+      pattern: "Evidence → analysis → concluding statement"
+      
+    - id: "DOC-PARA-003"
+      name: "PIE Structure"
+      pattern: "Point → Illustration → Explanation"
+      
+    - id: "DOC-PARA-004"
+      name: "TEEL Structure"
+      pattern: "Topic → Evidence → Explanation → Link"
+      
+    - id: "DOC-PARA-005"
+      name: "ICE Framework"
+      pattern: "Introduce → Cite → Explain"
+
+  signposting:
+    - id: "DOC-SIGN-001"
+      name: "Previewing"
+      markers: ["This paper will examine", "The following section discusses"]
+      
+    - id: "DOC-SIGN-002"
+      name: "Reviewing"
+      markers: ["Having established X", "As discussed above"]
+      
+    - id: "DOC-SIGN-003"
+      name: "Transitioning"
+      markers: ["Building on this", "This leads to", "We now turn to"]
+
+# ============================================================================
+# 8. GENRE-SPECIFIC CONVENTIONS
+# ============================================================================
+
+genre_conventions:
+
+  academic:
+    - id: "GEN-ACA-001"
+      name: "Research Article (IMRAD)"
+      required_sections: ["Abstract", "Introduction", "Methods", "Results", "Discussion"]
+      markers: ["hedged claims", "citation integration", "nominalization", "impersonal constructions"]
+      
+    - id: "GEN-ACA-002"
+      name: "Literature Review"
+      structures: ["thematic", "chronological", "methodological"]
+      markers: ["synthesis statements", "gap identification", "critical evaluation"]
+      
+    - id: "GEN-ACA-003"
+      name: "Abstract"
+      length: "150-300 words"
+      elements: ["purpose", "methods", "results", "conclusions"]
+
+  business:
+    - id: "GEN-BUS-001"
+      name: "Memo"
+      structure: ["TO", "FROM", "DATE", "SUBJECT", "Body"]
+      markers: ["direct language", "action-oriented", "you-attitude"]
+      
+    - id: "GEN-BUS-002"
+      name: "Business Report"
+      sections: ["Executive Summary", "Introduction", "Findings", "Conclusions", "Recommendations"]
+      
+    - id: "GEN-BUS-003"
+      name: "Executive Summary"
+      length: "5-10% of report"
+      elements: ["purpose", "key findings", "recommendations"]
+      
+    - id: "GEN-BUS-004"
+      name: "Professional Email"
+      elements: ["clear subject", "salutation", "purpose statement", "call to action", "professional closing"]
+
+  technical:
+    - id: "GEN-TEC-001"
+      name: "API Documentation"
+      components: ["overview", "authentication", "endpoints", "parameters", "responses", "examples"]
+      
+    - id: "GEN-TEC-002"
+      name: "User Manual"
+      sections: ["introduction", "getting started", "procedures", "troubleshooting", "reference"]
+      markers: ["numbered steps", "screenshots", "warning callouts"]
+      
+    - id: "GEN-TEC-003"
+      name: "README"
+      structure: ["title", "description", "installation", "usage", "features", "license"]
+      
+    - id: "GEN-TEC-004"
+      name: "Procedural Documentation"
+      pattern: ["task title", "prerequisites", "numbered steps", "expected results"]
+      markers: ["imperative mood", "second person", "action verbs"]
+
+  creative:
+    - id: "GEN-CRE-001"
+      name: "Fiction Narrative"
+      structures: ["three-act", "five-act", "hero's journey"]
+      elements: ["exposition", "rising action", "climax", "falling action", "resolution"]
+      
+    - id: "GEN-CRE-002"
+      name: "Dialogue"
+      conventions: ["new speaker = new paragraph", "said preferred", "action tags"]
+      punctuation: ["comma inside quotes with tag", "period with action"]
+      
+    - id: "GEN-CRE-003"
+      name: "Scene Structure"
+      elements: ["goal", "conflict", "outcome"]
+
+  poetry:
+    fixed_forms:
+      - id: "GEN-POE-001"
+        name: "Sonnet (Shakespearean)"
+        structure: "14 lines, ABAB CDCD EFEF GG"
+        meter: "iambic pentameter"
+        
+      - id: "GEN-POE-002"
+        name: "Sonnet (Petrarchan)"
+        structure: "14 lines, ABBA ABBA CDE CDE"
+        
+      - id: "GEN-POE-003"
+        name: "Villanelle"
+        structure: "19 lines, 5 tercets + quatrain, ABA pattern, two refrains"
+        
+      - id: "GEN-POE-004"
+        name: "Haiku"
+        structure: "3 lines, 5-7-5 syllables"
+        conventions: ["nature imagery", "seasonal reference", "juxtaposition"]
+
+    prosody:
+      - id: "GEN-POE-005"
+        name: "Enjambment"
+        description: "Line break mid-phrase"
+        
+      - id: "GEN-POE-006"
+        name: "End-stopped Line"
+        description: "Complete phrase at line end"
+        
+      - id: "GEN-POE-007"
+        name: "Caesura"
+        description: "Pause within line"
+
+  journalism:
+    - id: "GEN-JOU-001"
+      name: "News Article"
+      structure: "inverted pyramid"
+      lead: "5 Ws in first paragraph"
+      
+    - id: "GEN-JOU-002"
+      name: "Feature Article"
+      structure: ["anecdotal opening", "nut graph", "body", "kicker"]
+      
+    - id: "GEN-JOU-003"
+      name: "Attribution"
+      conventions: ["said preferred", "past tense", "attribution follows quote"]
+
+  speech_transcription:
+    - id: "GEN-SPE-001"
+      name: "Turn-Taking Markers"
+      yielding: ["falling intonation", "syntactic completion"]
+      holding: ["filled pauses (um, uh)", "rising intonation"]
+      
+    - id: "GEN-SPE-002"
+      name: "Discourse Markers in Speech"
+      markers:
+        well: "topic shift, dispreferred response"
+        so: "result, summary"
+        you_know: "shared knowledge appeal"
+        I_mean: "clarification"
+        like: "quotation, approximation"
+        
+    - id: "GEN-SPE-003"
+      name: "Fillers/Hesitation"
+      types: ["um", "uh", "er", "like", "you know"]
+      
+    - id: "GEN-SPE-004"
+      name: "Backchannels"
+      markers: ["mm-hm", "uh-huh", "yeah", "right", "oh"]
+      function: "signal active listening without claiming turn"
+
+# ============================================================================
+# 9. VISUAL-TEXTUAL PATTERNS
+# ============================================================================
+
+visual_patterns:
+
+  emphasis_conventions:
+    - id: "VIS-EMP-001"
+      name: "Bold"
+      usage: "key terms, headings, important concepts"
+      
+    - id: "VIS-EMP-002"
+      name: "Italic"
+      usage: "emphasis, titles, foreign words, key terms"
+      
+    - id: "VIS-EMP-003"
+      name: "Underline"
+      usage: "hyperlinks (digital), traditional emphasis (declining)"
+      
+    - id: "VIS-EMP-004"
+      name: "ALL CAPS"
+      usage: "acronyms, extreme emphasis, headers"
+
+  list_structures:
+    - id: "VIS-LIST-001"
+      name: "Bulleted List"
+      usage: "unordered items, features, points"
+      
+    - id: "VIS-LIST-002"
+      name: "Numbered List"
+      usage: "sequential steps, ranked items, procedures"
+      
+    - id: "VIS-LIST-003"
+      name: "Nested List"
+      usage: "hierarchical information"
+
+  heading_hierarchy:
+    - level_1: "main sections, title case or bold"
+    - level_2: "major subsections"
+    - level_3: "minor subsections"
+    - level_4: "paragraph-level divisions"
+
+  callout_types:
+    - id: "VIS-CALL-001"
+      name: "Note"
+      markers: ["Note:", "NB:"]
+      
+    - id: "VIS-CALL-002"
+      name: "Warning"
+      markers: ["Warning:", "Caution:"]
+      
+    - id: "VIS-CALL-003"
+      name: "Tip"
+      markers: ["Tip:", "Pro tip:"]
+
+# ============================================================================
+# 10. AFFECTIVE AND TONAL PATTERNS
+# ============================================================================
+
+affective_patterns:
+
+  emotional_appeals:
+    - id: "AFF-EMO-001"
+      name: "Empathy Appeal"
+      markers: ["Imagine yourself", "Consider what it feels like"]
+      
+    - id: "AFF-EMO-002"
+      name: "Fear Appeal"
+      markers: ["The alarming reality", "If we fail to act"]
+      
+    - id: "AFF-EMO-003"
+      name: "Hope Appeal"
+      markers: ["Together we can", "A brighter future"]
+      
+    - id: "AFF-EMO-004"
+      name: "Anger/Outrage Appeal"
+      markers: ["Unacceptable", "Must not be tolerated"]
+
+  humor_techniques:
+    - id: "AFF-HUM-001"
+      name: "Verbal Irony"
+      description: "Saying opposite of meaning"
+      
+    - id: "AFF-HUM-002"
+      name: "Satire"
+      description: "Humor to criticize/expose"
+      types: ["Horatian (gentle)", "Juvenalian (harsh)"]
+      
+    - id: "AFF-HUM-003"
+      name: "Sarcasm"
+      description: "Mocking irony"
+      
+    - id: "AFF-HUM-004"
+      name: "Understatement"
+      description: "Deliberately minimizing"
+      
+    - id: "AFF-HUM-005"
+      name: "Hyperbole"
+      description: "Deliberate exaggeration"
+
+  intensity_markers:
+    high: ["absolutely", "extremely", "completely", "utterly", "profoundly"]
+    moderate: ["significantly", "considerably", "substantially", "notably"]
+    low: ["somewhat", "slightly", "marginally", "to some extent"]
+    hedged: ["perhaps", "possibly", "may", "might", "could"]
+    boosted: ["certainly", "definitely", "clearly", "obviously", "undoubtedly"]
+
+  sentiment_markers:
+    positive: ["excellent", "beneficial", "promising", "successful", "impressive"]
+    negative: ["problematic", "concerning", "detrimental", "failed", "disappointing"]
+    neutral: ["observed", "noted", "reported", "documented", "identified"]
+
+  attitude_markers:
+    agreement: ["indeed", "certainly", "of course", "rightly"]
+    disagreement: ["however", "nevertheless", "on the contrary"]
+    surprise: ["surprisingly", "unexpectedly", "remarkably"]
+    importance: ["significantly", "crucially", "importantly"]
+    certainty: ["undoubtedly", "clearly", "obviously"]
+    doubt: ["questionably", "arguably", "presumably"]
+
+# ============================================================================
+# CROSS-REFERENCE INDEX
+# ============================================================================
+
+cross_references:
+  scope_levels:
+    word: ["markers", "intensity_markers", "sentiment_markers"]
+    phrase: ["figures_of_comparison", "nominalization"]
+    clause: ["clause_types", "special_constructions", "speech_acts"]
+    sentence: ["sentence_types", "rhetorical_devices"]
+    paragraph: ["paragraph_structures", "topic_management"]
+    section: ["organization_patterns", "CARS_moves"]
+    document: ["genre_conventions", "document_architecture"]
+
+  detection_priority:
+    high_frequency: ["conjunction_types", "discourse_markers", "hedges", "boosters"]
+    structural: ["clause_types", "sentence_types", "organization_patterns"]
+    semantic: ["speech_acts", "coherence_relations", "implicature"]
+    stylistic: ["formality", "stance_markers", "register"]
+
+# END OF TAXONOMY
