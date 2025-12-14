@@ -706,7 +706,7 @@ pragmatic_patterns:
       name: "New Information"
       markers: ["indefinite articles", "full NPs", "nuclear stress"]
 
-    thematic_progression:
+  thematic_progression:
       - id: "PRA-IS-005"
         name: "Simple Linear"
         pattern: "Rheme becomes next Theme"
